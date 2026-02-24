@@ -1,5 +1,5 @@
-# Proyecto Estructuras de Datos - Grupo 1
-> ## Estructuras de Datos (2016699) 
+# Proyecto Triage/Stage Emergency 2026-1S
+> ## Estructuras de Datos (2016699) - Grupo 2
 > Profesor: David Alberto Herrera Alvarez - dherreraal@unal.edu.co
 >
 > Monitor: Daniel Alfonso Cely Infante - dcelyi@unal.edu.co
