@@ -14,3 +14,7 @@
 
 --- 
 
+## Lenguajes:
+
+-  Java
+-  MySQL
