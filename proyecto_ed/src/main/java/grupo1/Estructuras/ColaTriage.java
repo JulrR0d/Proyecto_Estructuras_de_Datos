@@ -1,0 +1,140 @@
+package grupo1.Estructuras;
+
+import grupo1.Clases.Paciente;
+
+/**
+ * Cola de prioridad por buckets para triage medico.
+ *
+ * Diseno:
+ * - 5 listas enlazadas (una por cada nivel de triage 1..5)
+ * - cada lista mantiene orden FIFO de llegada
+ * - para atender, se busca desde nivel 1 hasta 5
+ *
+ * Importante:
+ * El escaneo 1..5 es constante porque el numero de niveles de triage
+ * es fijo y pequeno. Por eso atender tambien es O(1) en este problema.
+ */
+public class ColaTriage {
+
+    // Niveles validos de triage en el sistema.
+    public static final int TRIAGE_MIN = 1;
+    public static final int TRIAGE_MAX = 5;
+
+    // Arreglo de listas (bucket 0 => triage 1, ..., bucket 4 => triage 5).
+    private final Lista[] buckets;
+
+    // Cantidad total de pacientes en todas las listas.
+    private int totalPacientes;
+
+    /**
+     * Construye la cola de triage con 5 listas vacias.
+     */
+    public ColaTriage() {
+        buckets = new Lista[TRIAGE_MAX];
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = new Lista();
+        }
+        totalPacientes = 0;
+    }
+
+    /**
+     * Inserta un paciente en el bucket correspondiente a su nivel de triage.
+     *
+     * Complejidad: O(1)
+     *
+     * @param paciente paciente a registrar.
+     */
+    public void insertarPaciente(Paciente paciente) {
+        if (paciente == null) {
+            throw new IllegalArgumentException("El paciente no puede ser null.");
+        }
+
+        int nivel = paciente.getNivelTriage();
+        validarNivelTriage(nivel);
+
+        // Mapeo 1..5 -> 0..4
+        buckets[nivel - 1].encolar(paciente);
+        totalPacientes++;
+    }
+
+    /**
+     * Atiende y retorna el paciente de mayor prioridad disponible.
+     *
+     * Reglas:
+     * 1) Menor nivel de triage sale primero (1 antes que 5)
+     * 2) Si hay empate de nivel, se respeta FIFO por lista
+     *
+     * Complejidad: O(1) en este contexto (maximo 5 buckets a revisar)
+     *
+     * @return paciente atendido o null si no hay pacientes.
+     */
+    public Paciente atenderPaciente() {
+        for (int nivel = TRIAGE_MIN; nivel <= TRIAGE_MAX; nivel++) {
+            Lista lista = buckets[nivel - 1];
+            if (!lista.estaVacia()) {
+                totalPacientes--;
+                return lista.desencolar();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Consulta el siguiente paciente a atender sin extraerlo.
+     *
+     * Complejidad: O(1) en este contexto (5 buckets fijos)
+     *
+     * @return siguiente paciente o null si no hay pacientes.
+     */
+    public Paciente verSiguientePaciente() {
+        for (int nivel = TRIAGE_MIN; nivel <= TRIAGE_MAX; nivel++) {
+            Lista lista = buckets[nivel - 1];
+            if (!lista.estaVacia()) {
+                return lista.frente();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Retorna la cantidad total de pacientes.
+     *
+     * @return total en la cola de triage.
+     */
+    public int totalPacientes() {
+        return totalPacientes;
+    }
+
+    /**
+     * Retorna la cantidad de pacientes en un nivel de triage especifico.
+     *
+     * @param nivel nivel de triage (1..5)
+     * @return cantidad de pacientes en ese nivel.
+     */
+    public int pacientesPorNivel(int nivel) {
+        validarNivelTriage(nivel);
+        return buckets[nivel - 1].size();
+    }
+
+    /**
+     * Indica si la estructura completa esta vacia.
+     *
+     * @return true si no hay pacientes.
+     */
+    public boolean estaVacia() {
+        return totalPacientes == 0;
+    }
+
+    /**
+     * Valida que el nivel de triage este en el rango permitido.
+     */
+    private void validarNivelTriage(int nivel) {
+        if (nivel < TRIAGE_MIN || nivel > TRIAGE_MAX) {
+            throw new IllegalArgumentException(
+                "Nivel de triage invalido: " + nivel + ". Debe estar entre 1 y 5."
+            );
+        }
+    }
+}

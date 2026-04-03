@@ -1,7 +1,11 @@
 package grupo1.Clases;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
+/**
+ * Entidad que representa un paciente en el sistema de triage.
+ */
 public class Paciente {
 
     // Atributos
@@ -12,12 +16,13 @@ public class Paciente {
     private Byte nivelTriage;
 
     // Constructor
-    public Paciente(long id, String nombre, Byte nivelTraige) {
+    public Paciente(long id, String nombre, Byte nivelTriage) {
         this.id = id;
         this.nombre = nombre;
         this.fechaIngreso = LocalDate.now();
         this.horaIngreso = LocalTime.now();
-        this.nivelTriage = nivelTraige;
+        validarNivelTriage(nivelTriage);
+        this.nivelTriage = nivelTriage;
     }
 
     // Métodos Get
@@ -51,7 +56,28 @@ public class Paciente {
         this.horaIngreso = horaIngreso;
     }
     public void setNivelTriage(Byte nivelTriage) {
+        validarNivelTriage(nivelTriage);
         this.nivelTriage = nivelTriage;
+    }
+
+    /**
+     * Valida que el nivel de triage este dentro del rango permitido.
+     */
+    private void validarNivelTriage(Byte nivelTriage) {
+        if (nivelTriage == null || nivelTriage < 1 || nivelTriage > 5) {
+            throw new IllegalArgumentException("El nivel de triage debe estar entre 1 y 5.");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Paciente{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", nivelTriage=" + nivelTriage +
+                ", fechaIngreso=" + fechaIngreso +
+                ", horaIngreso=" + horaIngreso +
+                '}';
     }
     
 }
