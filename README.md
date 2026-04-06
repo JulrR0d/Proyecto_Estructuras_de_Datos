@@ -1,4 +1,14 @@
 # Proyecto Triage/Stage Emergency 2026-1S
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Java-Estructuras de Datos-red?style=for-the-badge&logo=java">
+  <img src="https://img.shields.io/badge/Estado-Desarrollo-success?style=for-the-badge">
+  <img src="https://img.shields.io/badge/UNAL-Proyecto%20Universitario-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Grupo-1-purple?style=for-the-badge">
+
+</p>
+ 
+
 > ## Estructuras de Datos (2016699) - Grupo 2
 > Profesor: David Alberto Herrera Alvarez - dherreraal@unal.edu.co
 >
