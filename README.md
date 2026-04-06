@@ -1,9 +1,11 @@
 # Proyecto Triage/Stage Emergency 2026-1S
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Java-Data Structure-red?style=for-the-badge&logo=java">
-  <img src="https://img.shields.io/badge/Estado-Acad%C3%A9mico-success?style=for-the-badge">
+<p align="left">
+  <img src="https://img.shields.io/badge/Java-Estructuras de Datos-red?style=for-the-badge&logo=java">
+  <img src="https://img.shields.io/badge/Estado-Desarrollo-success?style=for-the-badge">
   <img src="https://img.shields.io/badge/UNAL-Proyecto%20Universitario-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Grupo-3-purple?style=for-the-badge">
+
 </p>
  
 
