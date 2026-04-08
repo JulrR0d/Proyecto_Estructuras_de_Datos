@@ -52,19 +52,30 @@ Diseñar un sistema que gestione el flujo de pacientes en una sala de emergencia
 
 ## Estructura del proyecto:
 ```text
-proyecto_ed/
-│
-├── src/
-│   └── main/
-│       └── java/
-│           └── grupo1/
-│               ├── Main.java
-│               ├── modelo/
-│               ├── estructuras/    
-│               └── servicios/
-│
-├── target/
-├── pom.xml
-└── README.md
+.
+├── README.md
+└── proyecto_ed
+    ├── out
+    │   └── grupo1
+    │       ├── Clases
+    │       │   └── Paciente.class
+    │       ├── Estructuras
+    │       │   ├── ColaTriage.class
+    │       │   ├── Lista.class
+    │       │   └── Nodo.class
+    │       └── Main.class
+    ├── pom.xml
+    └── src
+        └── main
+            └── java
+                └── grupo1
+                    ├── Clases
+                    │   └── Paciente.java
+                    ├── Estructuras
+                    │   ├── ArbolAVL.java
+                    │   ├── ColaTriage.java
+                    │   ├── Lista.java
+                    │   └── Nodo.java
+                    └── Main.java
 ```
 
