@@ -20,20 +20,48 @@ El Triage es un sistema de selección y clasificación de pacientes basado en su
 ### Objetivo:
 Diseñar un sistema que gestione el flujo de pacientes en una sala de emergencias, asegurando que la atención se asigne por niveles de urgencia.
 
-#### **Registro único de pacientes:**
-- **ID único** ---> long 
-- **Nombre**  del paciente ---> String
-- Nivel de **Triage** ---> Byte
-- **Hora** de **ingreso***  ---> LocalTime
-- **Fecha** de **ingreso*** ---> LocalDate
+### Arquitectura y Eficiencia
 
-**Variables importadas del paquete java.time.*
+Para cumplir con los requisitos de alto rendimiento, se implementaron estructuras de datos manuales optimizadas:
 
-#### **El sistema debe:**
-- Priorización automática: Mantener una fila de espera donde los pacientes con menor nivel de Triage (más graves) siempre estén al principio.
+| Funcionalidad | Estructura Utilizada | Complejidad (Big O) | Justificación |
+| :--- | :--- | :--- | :--- |
+| **Gestión de Prioridad** | Cola de Prioridad con *Buckets* | $O(1)$ | Uso de un arreglo de 5 listas enlazadas (los triage) para evitar recorridos lineales. |
+| **Búsqueda por ID** | Árbol Binario Balanceado (AVL) | $O(\log n)$ | Garantiza búsquedas rápidas incluso con grandes volúmenes de datos, no importa si hay 1 o 1000 pacientes. |
+| **Desempate (FIFO)** | Lista Enlazada con puntero `tail` | $O(1)$ | Permite inserciones al final sin recorrer la lista completa, por la variable cola/tail . |
+
+### Funcionamiento de la Cola de Prioridad
+El sistema no utiliza una lista única, sino un arreglo de estructuras paralelas:
+
+[Índice 0: Triage 1] -> Paciente Crítico A -> Paciente Crítico B -> NULL
+
+[Índice 1: Triage 2] -> Paciente Urgente A -> Paciente Urgente B -> NULL
+
+[Índice 2: Triage 3] -> Paciente Urgencia menor A -> NULL....
+
+
+#### **Nuestro sistema debe:**
+- Gestión de Prioridad Multinivel: Clasificación y ordenamiento automático en 5 categorías de urgencia con complejidad $O(1)$.
+- Priorización automática: Mantener una fila de espera donde los pacientes con menor nivel de Triage siempre estén al principio.
+- Inmutabilidad temporal: Una vez registrado el ingreso, la fecha y hora no deben ser modificables por el usuario, asegurando la transparencia en las auditorías de tiempos de espera.
 - Acceso directo: Consultar el estado y datos de un paciente mediante su ID.
 - Atención: Extraer al paciente de mayor prioridad del sistema cuando un médico quede disponible.
-- Estadísticas *(Ad disputandum)*: Listar cuántos pacientes han sido atendidos por cada nivel de severidad.
+- Estadísticas: Listar cuántos pacientes han sido atendidos por cada nivel de severidad.
+- Resolución de Conflictos Temporales: Algoritmo FIFO integrado para el desempate de pacientes con la misma prioridad médica.
+- Monitoreo del Estado: Capacidad de visualizar el estado actual de todas las colas de espera en tiempo real
+
+
+### Modelo de Información
+El sistema gestiona la entidad `Paciente` con los siguientes atributos:
+
+| Campo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `id` | `long` | Identificador único. |
+| `nombre` | `String` | Nombre completo del paciente. |
+| `nivelTriage` | `byte` | Prioridad médica / triage (niveles de 1-5). |
+| `fechaIngreso`| `LocalDate` | Capturada automáticamente al registro. |
+| `horaIngreso` | `LocalTime` | estampa de tiempo para desempates (FIFO). |
+
 
 ## Desarrolado por:
 - Diego Alejandro Prieto Badillo - diprietob@unal.edu.co
