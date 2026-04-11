@@ -99,6 +99,27 @@ public class ColaTriage {
     }
 
     /**
+     * Retorna hasta cantidad pacientes en el orden real de atencion
+     * sin retirarlos de la estructura.
+     */
+    public Paciente[] obtenerSiguientesPacientes(int cantidad) {
+        if (cantidad <= 0 || totalPacientes == 0) {
+            return new Paciente[0];
+        }
+
+        Paciente[] resultado = new Paciente[Math.min(cantidad, totalPacientes)];
+        int indice = 0;
+
+        for (int nivel = TRIAGE_MIN; nivel <= TRIAGE_MAX && indice < resultado.length; nivel++) {
+            Lista lista = buckets[nivel - 1];
+            int copiados = lista.copiarPrimeros(resultado, indice, resultado.length - indice);
+            indice += copiados;
+        }
+
+        return resultado;
+    }
+
+    /**
      * Retorna la cantidad total de pacientes.
      *
      * @return total en la cola de triage.
