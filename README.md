@@ -14,11 +14,17 @@
 >
 > Monitor: Daniel Alfonso Cely Infante - dcelyi@unal.edu.co
 
-## Descripción del proyecto:
-El Triage es un sistema de selección y clasificación de pacientes basado en sus necesidades terapéuticas y los recursos disponibles. A diferencia del orden de llegada, este sistema prioriza la gravedad clínica para asegurar que las emergencias vitales sean atendidas de inmediato.
+---
 
-### Objetivo:
-Diseñar un sistema que gestione el flujo de pacientes en una sala de emergencias, asegurando que la atención se asigne por niveles de urgencia.
+## 📝 Descripción del Proyecto
+El **Triage Stage Emergency** es un sistema inteligente de selección y clasificación de pacientes basado en necesidades terapéuticas y recursos disponibles. A diferencia del modelo tradicional por orden de llegada, este sistema implementa algoritmos de priorización clínica para asegurar que las emergencias vitales sean atendidas de inmediato.
+
+### 🎯 Objetivos
+* Gestionar el flujo masivo de pacientes en una sala de emergencias.
+* Garantizar la asignación de atención mediante niveles de urgencia (1-5).
+* Optimizar la búsqueda y recuperación de información de pacientes en tiempo real.
+
+---
 
 ### Arquitectura y Eficiencia
 
@@ -33,11 +39,15 @@ Para cumplir con los requisitos de alto rendimiento, se implementaron estructura
 ### Funcionamiento de la Cola de Prioridad
 El sistema no utiliza una lista única, sino un arreglo de estructuras paralelas:
 
-[Índice 0: Triage 1] -> Paciente Crítico A -> Paciente Crítico B -> NULL
+[Índice 0: Triage 1] ──► [Paciente Crítico A] ──► [Paciente Crítico B] ──► NULL
 
-[Índice 1: Triage 2] -> Paciente Urgente A -> Paciente Urgente B -> NULL
+[Índice 1: Triage 2] ──► [Paciente Urgente A] ──► [Paciente Urgente B] ──► NULL
 
-[Índice 2: Triage 3] -> Paciente Urgencia menor A -> NULL....
+[Índice 2: Triage 3] ──► [Urgencia Menor A] ──► NULL
+
+[Índice 3: Triage 4] ──► [No Urgente A] ──► NULL
+
+[Índice 4: Triage 5] ──► NULL
 
 
 #### **Nuestro sistema debe:**
@@ -81,51 +91,26 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 ## Estructura del proyecto:
 ```text
 C:.
-│   README.md
-│   
 └───proyecto_ed
-    │   pom.xml
-    │   
     ├───out
     │   └───grupo1
-    │       │   Main.class
-    │       │   
     │       ├───Clases
-    │       │       Paciente.class
-    │       │       
     │       └───Estructuras
-    │               ColaTriage.class
-    │               Lista.class
-    │               Nodo.class
-    │               
     ├───src
-    │   └───main
+    │   ├───main
+    │   │   └───java
+    │   │       └───grupo1
+    │   │           ├───Clases
+    │   │           ├───Estructuras
+    │   │           └───GUI
+    │   └───test
     │       └───java
-    │           └───grupo1
-    │               │   Main.java
-    │               │   
-    │               ├───Clases
-    │               │       Paciente.java
-    │               │       
-    │               └───Estructuras
-    │                       ArbolAVL.java
-    │                       ColaTriage.java
-    │                       Lista.java
-    │                       Nodo.java
-    │                       
     └───target
-        └───classes
-            └───grupo1
-                │   Main.class
-                │   
-                ├───Clases
-                │       Paciente.class
-                │       
-                └───Estructuras
-                        ArbolAVL$Nodo.class
-                        ArbolAVL.class
-                        ColaTriage.class
-                        Lista.class
-                        Nodo.class
+        ├───classes
+        │   └───grupo1
+        │       ├───Clases
+        │       ├───Estructuras
+        │       └───GUI
+        └───test-classes
 ```
 

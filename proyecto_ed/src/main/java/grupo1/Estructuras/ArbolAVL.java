@@ -3,20 +3,23 @@ package grupo1.Estructuras;
 import grupo1.Clases.Paciente;
 
 /**
- * Arbol AVL para almacenar pacientes por su ID.
+ * Arbol AVL para almacenar referencias de pacientes por su ID.
  *
  * Complejidad:
  * - Insercion, eliminacion, busqueda: O(log n)
  * - Recorrido inorden: O(n)
  * 
- * Primera version antes de ver AVL en clase. Basado del BST del libro de Streib
- * y en este repositorio de "surajsubramanian" que hace una implementacion del
- * AVL en Java https://github.com/surajsubramanian/AVL-Trees
+ * Segunda version despues de estudiar los temas de AVL con el contenido del
+ * cronograma. Se organiza mejor y se comenta a fondo los metodos, de igual
+ * manera se explica las pequeñas diferencias con un arbol AVL comun y
+ * corriente (los arreglos en insercion y eliminacion) teniendo en cuenta el
+ * sistema de triage en mente, de igual manera
+ * se puede utilizar en otros contextos
  */
 
 public class ArbolAVL {
 
-    // NODO INTERNO
+    // NODO INTERNO, privado
     private class Nodo {
         long id; // ID del paciente
         Paciente valor;
@@ -25,18 +28,20 @@ public class ArbolAVL {
 
         // Complejidad: O(1)
         Nodo(long id, Paciente valor) {
-            this.id = id;
-            this.valor = valor;
-            this.altura = 1;
+            this.id = id; // El ID se usa como clave para ordenar el arbol
+            this.valor = valor; // El valor es el paciente asociado a ese ID, esto es la referencia mas no una
+                                // copia del paciente
+            this.altura = 1; // Altura inicial de un nodo hoja es 1 para facilitar calculos de balance
+                             // factor. Un nodo null se considera altura 0.
         }
     }
 
-    private Nodo raiz;
-    private int tam;
+    private Nodo raiz; // Raiz del arbol AVL
+    private int tam; // Cantidad de nodos en el arbol AVL
 
     // Complejidad: O(1)
     public ArbolAVL() {
-        raiz = null;
+        raiz = null; // El arbol inicialmente esta vacio
         tam = 0;
     }
 
@@ -47,7 +52,8 @@ public class ArbolAVL {
 
     // Actualiza la altura desde los hijos. Complejidad: O(1)
     private void actualizarAltura(Nodo n) {
-        n.altura = 1 + Math.max(altura(n.izq), altura(n.der));
+        n.altura = 1 + Math.max(altura(n.izq), altura(n.der)); // La altura de un nodo es 1 + la altura del hijo mas
+                                                               // alto
     }
 
     // Factor de balance: altura(izq) - altura(der). Complejidad: O(1)
@@ -57,123 +63,196 @@ public class ArbolAVL {
 
     // Rotacion simple a la derecha (caso LL). Complejidad: O(1)
     private Nodo rotDer(Nodo a) {
-        Nodo b = a.izq, t2 = b.der;
-        b.der = a;
-        a.izq = t2;
-        actualizarAltura(a);
-        actualizarAltura(b);
-        return b;
+        Nodo b = a.izq; // El hijo izquierdo se convierte en la nueva raiz de este subarbol
+        Nodo t = b.der; // El hijo derecho de b se convierte en el hijo izquierdo de a
+
+        b.der = a; // a se convierte en el hijo derecho de b
+        a.izq = t; // El hijo derecho de b que es t, se convierte en el hijo izquierdo de a
+
+        actualizarAltura(a); // Se actualiza la altura de a antes de b porque a ahora es hijo de b
+        actualizarAltura(b); // Se actualiza la altura de b la nueva raiz del subarbol
+
+        return b; // Se retorna la nueva raiz del subarbol despues de la rotacion
     }
 
     // Rotacion simple a la izquierda (caso RR). Complejidad: O(1)
     private Nodo rotIzq(Nodo a) {
-        Nodo b = a.der, t2 = b.izq;
-        b.izq = a;
-        a.der = t2;
-        actualizarAltura(a);
-        actualizarAltura(b);
-        return b;
+        Nodo b = a.der; // El hijo derecho se convierte en la nueva raiz de este subarbol
+        Nodo t = b.izq; // El hijo izquierdo de b se convierte en el hijo derecho de a
+
+        b.izq = a; // a se convierte en el hijo izquierdo de b
+        a.der = t; // El hijo izquierdo de b que es t, se convierte en el hijo derecho de a
+
+        actualizarAltura(a); // Se actualiza la altura de a antes de b porque a ahora es hijo de b
+        actualizarAltura(b); // Se actualiza la altura de b la nueva raiz del subarbol
+
+        return b; // Se retorna la nueva raiz del subarbol despues de la rotacion
     }
 
     // Rebalancea el nodo aplicando la rotacion correcta. Complejidad: O(1)
     private Nodo rebalancear(Nodo n) {
-        actualizarAltura(n);
-        int bf = balance(n);
+
+        actualizarAltura(n); // Se actualiza la altura antes de calcular el balance factor porque puede haber
+                             // cambiado por la insercion o eliminacion en los hijos
+
+        int bf = balance(n); // Balance factor del nodo n
+
         if (bf > 1) {
-            if (balance(n.izq) < 0)
+            if (balance(n.izq) < 0) // Se mira nuevamente el balance del hijo izquierdo para decidir rotacion porque
+                                    // puede ser LR o LL
                 n.izq = rotIzq(n.izq); // Caso LR
-            return rotDer(n);
+            return rotDer(n); // Caso LL
         }
+
         if (bf < -1) {
-            if (balance(n.der) > 0)
+            if (balance(n.der) > 0) // Se mira nuevamente el balance del hijo derecho para decidir rotacion porque
+                                    // puede ser RL o RR
                 n.der = rotDer(n.der); // Caso RL
-            return rotIzq(n);
+            return rotIzq(n); // Caso RR
         }
+
         return n;
     }
 
     // Inserta o reemplaza un paciente por su ID. Complejidad: O(log n)
     public void insertar(long id, Paciente p) {
-        boolean[] nuevo = { false };
-        raiz = insertar(raiz, id, p, nuevo);
-        if (nuevo[0])
+        boolean[] nuevo = { false }; // Arreglo de booleano para indicar si se inserto un nuevo nodo o se reemplazo
+                                     // uno existente. Necesario porque el metodo recursivo no puede retornar ambos
+                                     // el nodo raiz y si se inserto o no, se usa arreglo por el paso por referencia.
+
+        raiz = insertar(raiz, id, p, nuevo); // Llama al metodo recursivo para insertar el paciente en el arbol AVL,
+                                             // actualizando la raiz del arbol despues de la insercion y rebalanceo
+
+        if (nuevo[0]) // Si se inserto un nuevo nodo, se incrementa el tamaño del arbol. Ya que puede
+                      // que solo se haya reemplazado el paciente de un nodo existente, en ese caso no
+                      // se incrementa el tamaño.
             tam++;
     }
 
     private Nodo insertar(Nodo n, long id, Paciente p, boolean[] nuevo) {
-        if (n == null) {
-            nuevo[0] = true;
-            return new Nodo(id, p);
+        if (n == null) { // Si se llega a un nodo null, se inserta el nuevo paciente aqui
+            nuevo[0] = true; // Se marca que se inserto un nuevo nodo
+            return new Nodo(id, p); // Se crea un nuevo nodo con el ID y paciente dado, este nodo es una hoja con
+                                    // altura 1
         }
-        if (id < n.id)
+
+        if (id < n.id) {// Si el ID a insertar es menor que el ID del nodo actual, se inserta
+                        // recursivamente en el subarbol izquierdo
             n.izq = insertar(n.izq, id, p, nuevo);
-        else if (id > n.id)
+        } else if (id > n.id) { // Si el ID a insertar es mayor que el ID del nodo actual, se inserta
+                                // recursivamente en el subarbol derecho
             n.der = insertar(n.der, id, p, nuevo);
-        else
-            n.valor = p; // duplicado: reemplaza valor
-        return rebalancear(n);
+        } else {
+            n.valor = p; // Es el mismo ID, se reemplaza el paciente del nodo actual por el nuevo
+                         // paciente dado.
+        }
+
+        return rebalancear(n); // Se rebalancea el nodo actual despues de la insercion recursiva en alguno de
+                               // sus hijos, y se retorna el nodo
+                               // raiz del subarbol resultante despues de la insercion y rebalanceo.
     }
 
     // Elimina el nodo con la id dada. Retorna el paciente o null. Complejidad:
     // O(log n)
     public Paciente eliminar(long id) {
-        Paciente[] ret = new Paciente[1];
-        raiz = eliminar(raiz, id, ret);
-        if (ret[0] != null)
+        Paciente[] ret = new Paciente[1]; // Arreglo de paciente para retornar el paciente eliminado, necesario por el
+                                          // paso por referencia en la recursividad del metodo eliminar.
+
+        raiz = eliminar(raiz, id, ret); // Llama al metodo recursivo para eliminar el nodo con el ID dado, actualizando
+                                        // la raiz del arbol despues de la eliminacion y rebalanceo. El paciente
+                                        // eliminado se guarda en ret[0]
+
+        if (ret[0] != null) // Si se elimino un nodo, se decrementa el tamaño del arbol.
             tam--;
-        return ret[0];
+        return ret[0]; // Se retorna el paciente eliminado, o null si no se encontro
     }
 
     private Nodo eliminar(Nodo n, long id, Paciente[] ret) {
-        if (n == null)
+        if (n == null) {// Si se llega a un nodo null, no se encontro el ID a eliminar, se retorna null
             return null;
-        if (id < n.id)
-            n.izq = eliminar(n.izq, id, ret);
-        else if (id > n.id)
-            n.der = eliminar(n.der, id, ret);
-        else {
-            ret[0] = n.valor;
-            if (n.izq == null)
-                return n.der;
-            if (n.der == null)
-                return n.izq;
-            // Dos hijos: reemplazar con el sucesor inorden (minimo del subarbol derecho)
-            Nodo suc = minNodo(n.der);
-            n.id = suc.id;
-            n.valor = suc.valor;
-            Paciente[] dummy = new Paciente[1];
-            n.der = eliminar(n.der, suc.id, dummy);
         }
-        return rebalancear(n);
+
+        if (id < n.id) { // Si el ID a eliminar es menor que el ID del nodo actual, se elimina
+                         // recursivamente en el subarbol izquierdo
+
+            n.izq = eliminar(n.izq, id, ret);
+
+        } else if (id > n.id) { // Si el ID a eliminar es mayor que el ID del nodo actual, se elimina
+                                // recursivamente en el subarbol derecho
+            n.der = eliminar(n.der, id, ret);
+
+        } else {
+            ret[0] = n.valor; // Es el nodo a eliminar, se guarda el paciente del nodo actual en ret[0] para
+                              // retornar despues
+
+            // Caso con 0 o 1 hijo, se reemplaza el nodo actual por su unico hijo o por null
+            // si no tiene hijos
+
+            if (n.izq == null) {
+                return n.der;
+            }
+
+            if (n.der == null) {
+                return n.izq;
+            }
+
+            // Caso con dos hijos, reemplazar con el sucesor inorden qie es el minimo
+            // del subarbol derecho
+
+            Nodo suc = minNodo(n.der);
+            n.id = suc.id; // Se copia el ID del sucesor al nodo actual
+            Paciente[] eliminadoExtra = new Paciente[1]; // Arreglo para almacenar el paciente eliminado pero este
+                                                         // paciente no se retorna, es solo para eliminar el nodo del
+                                                         // sucesor que se va a mover al lugar del nodo actual
+
+            // Este eliminadoExtra es necesario para no sobrescribir el paciente eliminado
+            // que se va a retornar en ret[0] al eliminar el nodo actual
+
+            n.der = eliminar(n.der, suc.id, eliminadoExtra);
+            // Se elimina el nodo del sucesor en el subarbol derecho,
+            // ya que ese nodo se va a mover al lugar del nodo actual.
+            // El paciente eliminado de esta eliminacion no se retorna
+            // porque es el mismo paciente que ya se guardo en ret[0]
+            // al eliminar el nodo actual, este paso es solo para
+            // eliminar el nodo del sucesor que se va a mover al lugar
+            // del nodo actual.
+
+        }
+        return rebalancear(n); // Se rebalancea el nodo actual despues de la eliminacion recursiva en alguno de
+                               // sus hijos, y se retorna el nodo
+                               // raiz del subarbol resultante despues de la eliminacion y rebalanceo.
     }
 
-    // Busca un paciente por ID. Retorna null si no existe. Complejidad: O(log n)
+    // Busca un paciente por ID. Se retorna null si no existe. Complejidad: O(log n)
     public Paciente buscar(long id) {
         Nodo n = raiz;
+
+        // Busqueda igual que en un arbol BST
         while (n != null) {
-            if (id < n.id)
+            if (id < n.id) {
                 n = n.izq;
-            else if (id > n.id)
+            } else if (id > n.id) {
                 n = n.der;
-            else
+            } else {
                 return n.valor;
+            }
         }
         return null;
     }
 
-    // Retorna el nodo mas a la izquierda (minimo). Complejidad: O(log n)
+    // Retorna el nodo mas a la izquierda que es el minimo. Complejidad: O(log n)
     private Nodo minNodo(Nodo n) {
         while (n.izq != null)
             n = n.izq;
         return n;
     }
 
-    // Recorrido inorden: imprime pacientes en orden ascendente de ID. Complejidad:
-    // O(n)
+    // Recorrido inorden, este imprime pacientes en orden ascendente de ID.
+    // Complejidad: O(n)
     public void recorridoInorden() {
-        System.out.print("AVL inorden (por ID):");
+        System.out.println("AVL inorden (por ID):");
         if (raiz == null) {
-            System.out.println(" Vacio");
+            System.out.println("Vacio");
             return;
         }
         inorden(raiz);
@@ -181,22 +260,30 @@ public class ArbolAVL {
     }
 
     private void inorden(Nodo n) {
-        if (n.izq != null)
+        if (n.izq != null) {
             inorden(n.izq);
+        }
+
         System.out.print(" [" + n.id + ":" + n.valor.getNombre() + "]");
-        if (n.der != null)
+
+        if (n.der != null) {
             inorden(n.der);
+        }
     }
 
-    // Complejidad: O(1)
+    // Los siguientes son de complejidad O(1)
+
+    // Cantidad de nodos en el arbol AVL
     public int tam() {
         return tam;
     }
 
+    // Vacio o no
     public boolean vacio() {
         return raiz == null;
     }
 
+    // Altura del arbol AVL
     public int altura() {
         return altura(raiz);
     }
