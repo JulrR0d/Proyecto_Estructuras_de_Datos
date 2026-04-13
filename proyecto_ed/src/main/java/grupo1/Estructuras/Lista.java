@@ -107,4 +107,26 @@ public class Lista {
     public int size() {
         return size;
     }
+
+    /**
+     * Copia hasta max elementos de la lista al arreglo destino
+     * sin modificar el contenido de la cola.
+     */
+    public int copiarPrimeros(Paciente[] destino, int desde, int max) {
+        if (destino == null || max <= 0 || desde < 0 || desde >= destino.length) {
+            return 0;
+        }
+
+        int limite = Math.min(max, destino.length - desde);
+        int copiados = 0;
+        Nodo actual = head;
+
+        while (actual != null && copiados < limite) {
+            destino[desde + copiados] = actual.getDato();
+            copiados++;
+            actual = actual.getSiguiente();
+        }
+
+        return copiados;
+    }
 }

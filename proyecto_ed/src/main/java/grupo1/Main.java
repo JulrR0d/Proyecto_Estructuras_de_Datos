@@ -1,9 +1,15 @@
 package grupo1;
 
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import grupo1.Clases.Paciente;
 import grupo1.Estructuras.ColaTriage;
+import grupo1.GUI.GUI;
+import grupo1.GUI.SalaEsperaGUI;
 
 public class Main {
+
     /*
     Carlos: Mi idea principalmente era realizar una lista simple, que añadiera los pacientes por triage, y en caso de empate de triage, añadirlos al final por hora, pero, que tuviera un puntero a cada triage, para no tener que recorrer la lista cada vez que se añada un paciente, y así mantener el orden de prioridad. Ya luego preguntandole a GPT, me dijo que lo mejor era usar una cola de prioridad:
         GPT:
@@ -17,33 +23,48 @@ public class Main {
     */
 
     public static void main(String[] args) {
+        // Se arranca la app en el hilo de interfaz grafica de Swing.
+        SwingUtilities.invokeLater(Main::iniciar);
+    }
+
+    private static void iniciar() {
+        // Se aplica el look and feel del sistema operativo.
+        aplicarTemaBasico();
+
         // Cola principal de triage por niveles (1..5).
         ColaTriage colaTriage = new ColaTriage();
 
-        // Se insertan pacientes en distinto orden para comprobar:
-        // 1) prioridad por triage
-        // 2) FIFO cuando el triage es igual
-        colaTriage.insertarPaciente(new Paciente(1L, "Ana", (byte) 3));
-        colaTriage.insertarPaciente(new Paciente(2L, "Luis", (byte) 1));
-        colaTriage.insertarPaciente(new Paciente(3L, "Marta", (byte) 2));
-        colaTriage.insertarPaciente(new Paciente(4L, "Carlos", (byte) 1));
-        colaTriage.insertarPaciente(new Paciente(5L, "Elena", (byte) 5));
+        // Precarga inicial para pruebas visuales y funcionales.
+        precargarPacientes(colaTriage);
 
-        System.out.println("Total pacientes inicial: " + colaTriage.totalPacientes());
-        System.out.println("Siguiente paciente: " + colaTriage.verSiguientePaciente());
-        System.out.println();
+        // Ventana de administracion (registro, atencion y estado).
+        GUI panelControl = new GUI(colaTriage);
+        panelControl.mostrar();
 
-        // Se atienden en orden esperado:
-        // triage 1: Luis -> Carlos (FIFO)
-        // triage 2: Marta
-        // triage 3: Ana
-        // triage 5: Elena
-        while (!colaTriage.estaVacia()) {
-            Paciente atendido = colaTriage.atenderPaciente();
-            System.out.println("Atendido: " + atendido);
+        // Pantalla de sala de espera (llamado en tiempo real).
+        SalaEsperaGUI pantallaSala = new SalaEsperaGUI(colaTriage);
+        pantallaSala.mostrar();
+    }
+
+    private static void precargarPacientes(ColaTriage colaTriage) {
+        // Se pre-cargan 10 pacientes iniciales para simular una cola real.
+        colaTriage.insertarPaciente(new Paciente(101L, "Ana", (byte) 2));
+        colaTriage.insertarPaciente(new Paciente(102L, "Luis", (byte) 1));
+        colaTriage.insertarPaciente(new Paciente(103L, "Marta", (byte) 4));
+        colaTriage.insertarPaciente(new Paciente(104L, "Carlos", (byte) 3));
+        colaTriage.insertarPaciente(new Paciente(105L, "Elena", (byte) 2));
+        colaTriage.insertarPaciente(new Paciente(106L, "Pablo", (byte) 5));
+        colaTriage.insertarPaciente(new Paciente(107L, "Sofia", (byte) 1));
+        colaTriage.insertarPaciente(new Paciente(108L, "Diego", (byte) 3));
+        colaTriage.insertarPaciente(new Paciente(109L, "Nora", (byte) 4));
+        colaTriage.insertarPaciente(new Paciente(110L, "Jorge", (byte) 2));
+    }
+
+    private static void aplicarTemaBasico() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            // Se conserva el look and feel por defecto si falla el sistema.
         }
-
-        System.out.println();
-        System.out.println("Total pacientes final: " + colaTriage.totalPacientes());
     }
 }

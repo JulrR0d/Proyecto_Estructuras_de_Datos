@@ -205,6 +205,9 @@ public class ArbolAVL {
                                                          // paciente no se retorna, es solo para eliminar el nodo del
                                                          // sucesor que se va a mover al lugar del nodo actual
 
+            // Este eliminadoExtra es necesario para no sobrescribir el paciente eliminado
+            // que se va a retornar en ret[0] al eliminar el nodo actual
+
             n.der = eliminar(n.der, suc.id, eliminadoExtra);
             // Se elimina el nodo del sucesor en el subarbol derecho,
             // ya que ese nodo se va a mover al lugar del nodo actual.
