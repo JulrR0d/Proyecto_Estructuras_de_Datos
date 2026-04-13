@@ -91,51 +91,26 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 ## Estructura del proyecto:
 ```text
 C:.
-│   README.md
-│   
 └───proyecto_ed
-    │   pom.xml
-    │   
     ├───out
     │   └───grupo1
-    │       │   Main.class
-    │       │   
     │       ├───Clases
-    │       │       Paciente.class
-    │       │       
     │       └───Estructuras
-    │               ColaTriage.class
-    │               Lista.class
-    │               Nodo.class
-    │               
     ├───src
-    │   └───main
+    │   ├───main
+    │   │   └───java
+    │   │       └───grupo1
+    │   │           ├───Clases
+    │   │           ├───Estructuras
+    │   │           └───GUI
+    │   └───test
     │       └───java
-    │           └───grupo1
-    │               │   Main.java
-    │               │   
-    │               ├───Clases
-    │               │       Paciente.java
-    │               │       
-    │               └───Estructuras
-    │                       ArbolAVL.java
-    │                       ColaTriage.java
-    │                       Lista.java
-    │                       Nodo.java
-    │                       
     └───target
-        └───classes
-            └───grupo1
-                │   Main.class
-                │   
-                ├───Clases
-                │       Paciente.class
-                │       
-                └───Estructuras
-                        ArbolAVL$Nodo.class
-                        ArbolAVL.class
-                        ColaTriage.class
-                        Lista.class
-                        Nodo.class
+        ├───classes
+        │   └───grupo1
+        │       ├───Clases
+        │       ├───Estructuras
+        │       └───GUI
+        └───test-classes
 ```
 
