@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
@@ -24,6 +25,7 @@ import javax.swing.border.Border;
 
 import grupo1.Clases.Paciente;
 import grupo1.Estructuras.ColaTriage;
+import grupo1.GUI.AVLpanel;
 
 public class GUI {
 	private static final Color BG = new Color(233, 236, 241);
@@ -37,6 +39,8 @@ public class GUI {
 	private final JTextField nombreField;
 	private final JComboBox<Integer> triageCombo;
 	private final JTextArea salida;
+
+	private AVLpanel avlPanel; // panel con el arbol AVL
 
 	public GUI(ColaTriage colaTriage) {
 		this.colaTriage = colaTriage;
@@ -162,7 +166,12 @@ public class GUI {
 		content.add(actions, BorderLayout.CENTER);
 		content.add(scroll, BorderLayout.SOUTH);
 
-		card.add(content, BorderLayout.CENTER);
+		avlPanel = new AVLpanel(colaTriage.getArbolAVL());
+		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, avlPanel, content);
+		split.setDividerLocation(340);
+		split.setResizeWeight(0.35);
+		split.setDividerSize(4);
+		card.add(split, BorderLayout.CENTER);
 		root.add(header, BorderLayout.NORTH);
 		root.add(card, BorderLayout.CENTER);
 		frame.add(root);
@@ -216,6 +225,8 @@ public class GUI {
 			byte triage = ((Integer) triageCombo.getSelectedItem()).byteValue();
 			Paciente paciente = new Paciente(id, nombre, triage);
 			colaTriage.insertarPaciente(paciente);
+			long[] camino = colaTriage.getArbolAVL().obtenerCaminoBusqueda(id);
+			avlPanel.animarInsercion(camino, id);
 
 			salida.setText("Paciente registrado\n" + paciente + "\n\n" + estadoTexto());
 			idField.setText("");
@@ -239,16 +250,21 @@ public class GUI {
 	}
 
 	private void atenderPaciente() {
-		Paciente atendido = colaTriage.atenderPaciente();
-		if (atendido == null) {
-			salida.setText("No hay pacientes para atender.\n\n" + estadoTexto());
-			return;
-		}
-		salida.setText("Paciente atendido\n" + atendido + "\n\n" + estadoTexto());
+		Paciente sig = colaTriage.verSiguientePaciente();
+		// Capturar camino ANTES de eliminar
+		long[] camino = colaTriage.getArbolAVL().obtenerCaminoBusqueda(sig.getId());
+
+		// Animar primero; la eliminación real ocurre al terminar
+		avlPanel.animarEliminacion(camino, sig.getId(), () -> {
+			Paciente atendido = colaTriage.atenderPaciente();
+			salida.setText("Paciente atendido\n" + atendido + "\n\n" + estadoTexto());
+			avlPanel.refrescar();
+		});
 	}
 
 	private void actualizarEstado() {
 		salida.setText(estadoTexto());
+		avlPanel.refrescar();
 	}
 
 	private String estadoTexto() {
