@@ -26,6 +26,8 @@ public class ColaTriage {
     // Cantidad total de pacientes en todas las listas.
     private int totalPacientes;
 
+    // Arból que almacena todos los pacientes del sistema
+    private final ArbolAVL arbolAVL;
     /**
      * Construye la cola de triage con 5 listas vacias.
      */
@@ -35,6 +37,7 @@ public class ColaTriage {
             buckets[i] = new Lista();
         }
         totalPacientes = 0;
+        arbolAVL = new ArbolAVL();
     }
 
     /**
@@ -54,6 +57,7 @@ public class ColaTriage {
 
         // Mapeo 1..5 -> 0..4
         buckets[nivel - 1].encolar(paciente);
+        arbolAVL.insertar(paciente.getId(), paciente);
         totalPacientes++;
     }
 
@@ -73,6 +77,7 @@ public class ColaTriage {
             Lista lista = buckets[nivel - 1];
             if (!lista.estaVacia()) {
                 totalPacientes--;
+                arbolAVL.eliminar(lista.frente().getId());
                 return lista.desencolar();
             }
         }
@@ -157,5 +162,19 @@ public class ColaTriage {
                 "Nivel de triage invalido: " + nivel + ". Debe estar entre 1 y 5."
             );
         }
+    }
+
+    /**
+     * Busqua un paciente en el árbol AVL
+     */
+    public Paciente buscarPaciente(long id){
+        return arbolAVL.buscar(id);
+    }
+
+    /**
+     * hace público una vista del arbol AVL
+     */
+    public ArbolAVL getArbolAVL(){
+        return arbolAVL;
     }
 }
