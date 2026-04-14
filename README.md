@@ -35,7 +35,7 @@ Para cumplir con los requisitos de alto rendimiento, se implementaron estructura
 | **Gestión de Prioridad** | Cola de Prioridad con *Buckets* | $O(1)$ | Uso de un arreglo de 5 listas enlazadas (los triage) para evitar recorridos lineales. |
 | **Búsqueda por ID** | Árbol Binario Balanceado (AVL) | $O(\log n)$ | Garantiza búsquedas rápidas incluso con grandes volúmenes de datos, no importa si hay 1 o 1000 pacientes. |
 | **Desempate (FIFO)** | Lista Enlazada con puntero `tail` | $O(1)$ | Permite inserciones al final sin recorrer la lista completa, por la variable cola/tail . |
-
+| **Historial de Atenciones** | Pila (LIFO) | $O(1)$ | Registra pacientes atendidos y permite deshacer la última atención. |
 ### Funcionamiento de la Cola de Prioridad
 El sistema no utiliza una lista única, sino un arreglo de estructuras paralelas:
 
@@ -81,6 +81,11 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 - Miguel Angel Suarez Montiel - migsuarezmo@unal.edu.co
 
 --- 
+## Instalación
+1. Clonar el repositorio: `git clone <url-del-repo>`
+2. Abrir el proyecto con IntelliJ IDEA o VS Code
+3. Ejecutar `Main.java` para iniciar el sistema
+4. Ejecutar `Benchmark.java` para ver el análisis de rendimiento
 
 ## Herramientas:
 
