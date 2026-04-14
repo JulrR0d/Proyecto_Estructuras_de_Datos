@@ -97,25 +97,23 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 ```text
 C:.
 └───proyecto_ed
-    ├───out
-    │   └───grupo1
-    │       ├───Clases
-    │       └───Estructuras
     ├───src
     │   ├───main
     │   │   └───java
     │   │       └───grupo1
+    │   │           ├───Benchmark
+    │   │           │   └───Benchmark.java
     │   │           ├───Clases
+    │   │           │   └───Paciente.java
     │   │           ├───Estructuras
-    │   │           └───GUI
+    │   │           │   ├───ArbolAVL.java
+    │   │           │   ├───ColaTriage.java
+    │   │           │   ├───Lista.java
+    │   │           │   ├───Nodo.java
+    │   │           │   └───Pila.java
+    │   │           ├───GUI
+    │   │           └───Main.java
     │   └───test
-    │       └───java
     └───target
-        ├───classes
-        │   └───grupo1
-        │       ├───Clases
-        │       ├───Estructuras
-        │       └───GUI
-        └───test-classes
 ```
 
