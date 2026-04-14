@@ -68,13 +68,13 @@ public class Paciente {
     }
     public void setNombre(String nombre) {
         if (nombre  == null || nombre.trim().isEmpty()){
-            throw new RunTimeException("Debes ingresar un nombre.");
+            throw new RuntimeException("Debes ingresar un nombre.");
         }
         this.nombre = nombre;
     }
     public void setEdad(int edad) {
         if (edad < 0 || edad > 100) {
-            throw new RunTimeException("Edad invalida.");
+            throw new RuntimeException("Edad invalida.");
         }
         this.edad = edad;
     }
@@ -82,11 +82,11 @@ public class Paciente {
         if (sexo == 'M' || sexo == 'F') {
             this.sexo = sexo;
         } else {
-            throw new RunTimeException("Sexo invalido (M o F)");
+            throw new RuntimeException("Sexo invalido (M o F)");
         }
     }
-    public void setEps(String eps) {
-        this.eps = eps;
+    public void setEps(String EPS) {
+        this.EPS = EPS;
     }
     public void setSintomas(String sintomas) {
         this.sintomas = sintomas;
