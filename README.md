@@ -68,9 +68,14 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 | :--- | :--- | :--- |
 | `id` | `long` | Identificador único. |
 | `nombre` | `String` | Nombre completo del paciente. |
+| `edad` | `int` | Edad del Paciente ( rango 0-100 ) |
+| `sexo` | `char` | Masculino / Femenino |
+| `EPS` | `String` | eps a la que pertenece (POS / PVS) |
+| `sintomas` | `String` | Evalucion del paciente |
 | `nivelTriage` | `byte` | Prioridad médica / triage (niveles de 1-5). |
 | `fechaIngreso`| `LocalDate` | Capturada automáticamente al registro. |
 | `horaIngreso` | `LocalTime` | estampa de tiempo para desempates (FIFO). |
+
 
 
 ## Desarrolado por:
