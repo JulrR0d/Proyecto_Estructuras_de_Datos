@@ -39,6 +39,10 @@ public class GUI {
 	private final JTextField nombreField;
 	private final JComboBox<Integer> triageCombo;
 	private final JTextArea salida;
+	private final JTextField edadField;
+    private final JTextField EPSField;
+    private final JTextField sintomasField;
+    private final JComboBox<String> sexoCombo; 
 
 	private AVLpanel avlPanel; // panel con el arbol AVL
 
@@ -78,9 +82,21 @@ public class GUI {
 		JLabel idLabel = crearLabel("ID");
 		JLabel nombreLabel = crearLabel("Nombre");
 		JLabel triageLabel = crearLabel("Nivel triage");
+		JLabel edadLabel    = crearLabel("Edad");
+		JLabel epsLabel     = crearLabel("EPS");
+		JLabel sintomasLabel = crearLabel("Síntomas");
+		JLabel sexoLabel    = crearLabel("Sexo");
 
 		idField = crearInput();
 		nombreField = crearInput();
+		edadField = crearInput();
+		EPSField = crearInput();
+		sintomasField = crearInput();
+		sexoCombo    = new JComboBox<>(new String[]{"M", "F"});
+		sexoCombo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+		sexoCombo.setBackground(INSET);
+		sexoCombo.setForeground(TEXT);
+		sexoCombo.setBorder(crearRelieveInterno())
 		triageCombo = new JComboBox<>(new Integer[] {1, 2, 3, 4, 5});
 		triageCombo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
 		triageCombo.setBackground(INSET);
@@ -90,32 +106,68 @@ public class GUI {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
-		form.add(idLabel, gbc);
+		form.add(idLabel, gbc); //ID
 
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		form.add(idField, gbc);
+		form.add(idField, gbc); //ID
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.weightx = 0;
-		form.add(nombreLabel, gbc);
+		form.add(nombreLabel, gbc); //NOMBRE
 
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		form.add(nombreField, gbc);
+		form.add(nombreField, gbc); //NOMRBE
 
-		gbc.gridx = 0;
-		gbc.gridy = 2;
+		gbc.gridx = 0; 
+		gbc.gridy = 2; 
 		gbc.weightx = 0;
-		form.add(triageLabel, gbc);
+		form.add(edadLabel, gbc); //EDAD
+		
+		gbc.gridx = 1;
+		gbc.weightx = 1;
+		form.add(edadField, gbc); //EDAD
+
+		gbc.gridx = 0; 
+		gbc.gridy = 3; 
+		gbc.weightx = 0;
+		form.add(sexoLabel, gbc); //SEXO
+		
+		gbc.gridx = 1; 
+		gbc.weightx = 1;
+		form.add(sexoCombo, gbc); //SeXO
+
+		gbc.gridx = 0; 
+		gbc.gridy = 4; 
+		gbc.weightx = 0;
+		form.add(EPSLabel, gbc); //EPS
+		
+		gbc.gridx = 1; 
+		gbc.weightx = 1;
+		form.add(EPSField, gbc);//EPS
+
+		gbc.gridx = 0; 
+		gbc.gridy = 5; 
+		gbc.weightx = 0;
+		form.add(sintomasLabel, gbc);
+		
+		gbc.gridx = 1; 
+		gbc.weightx = 1;
+		form.add(sintomasField, gbc);
+				
+		gbc.gridx = 0;
+		gbc.gridy = 6;
+		gbc.weightx = 0;
+		form.add(triageLabel, gbc); //IVEL TRI
 
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		form.add(triageCombo, gbc);
+		form.add(triageCombo, gbc); //NIVEL TRI
 
 		JButton registrar = crearBoton("Registrar");
-		gbc.gridx = 2;
+		gbc.gridx = 7;
 		gbc.weightx = 0;
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.anchor = GridBagConstraints.WEST;
@@ -218,21 +270,45 @@ public class GUI {
 		try {
 			long id = Long.parseLong(idField.getText().trim());
 			String nombre = nombreField.getText().trim();
+			
 			if (nombre.isEmpty()) {
 				throw new IllegalArgumentException("El nombre no puede estar vacio.");
 			}
-
+			
+			int edad = Integer.parseInt(edadField.getText().trim());
+			
+			char sexo   = ((String) sexoCombo.getSelectedItem()).charAt(0);
+			
+	        String EPS  = epsField.getText().trim();
+			
+			if (EPS.isEmpty()) {
+				throw new IllegalArgumentException("Tienes que ingresar una EPS");
+			}
+			
+	        String sintoma = sintomasField.getText().trim();
+			
+			if (sintoma.isEpmty()) {
+				throw new IllegalArgumentException ("Debes ingresar los sintomas del paciente");
+			}
+			
 			byte triage = ((Integer) triageCombo.getSelectedItem()).byteValue();
-			Paciente paciente = new Paciente(id, nombre, triage);
+			
+			Paciente paciente = new Paciente(id, nombre, edad, sexo, EPS, sintoma, triage);
 			colaTriage.insertarPaciente(paciente);
 			long[] camino = colaTriage.getArbolAVL().obtenerCaminoBusqueda(id);
 			avlPanel.animarInsercion(camino, id);
 
 			salida.setText("Paciente registrado\n" + paciente + "\n\n" + estadoTexto());
+			
 			idField.setText("");
 			nombreField.setText("");
+			edadField.setText("");
+			EPSField.setText("");
+			sintomaField.setText("");
+			sexoCombo.setSelectedIndex(0);
 			triageCombo.setSelectedIndex(0);
 			idField.requestFocus();
+			
 		} catch (NumberFormatException ex) {
 			JOptionPane.showMessageDialog(frame, "El ID debe ser numerico.", "Dato invalido", JOptionPane.WARNING_MESSAGE);
 		} catch (IllegalArgumentException ex) {
