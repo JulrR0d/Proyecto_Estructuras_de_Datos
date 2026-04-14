@@ -28,6 +28,8 @@ public class ColaTriage {
 
     // Arból que almacena todos los pacientes del sistema
     private final ArbolAVL arbolAVL;
+    // Pila de historial: registra cada paciente atendido en orden LIFO.
+    private final Pila historialAtenciones;
     /**
      * Construye la cola de triage con 5 listas vacias.
      */
@@ -38,6 +40,7 @@ public class ColaTriage {
         }
         totalPacientes = 0;
         arbolAVL = new ArbolAVL();
+        historialAtenciones = new Pila();
     }
 
     /**
@@ -72,18 +75,19 @@ public class ColaTriage {
      *
      * @return paciente atendido o null si no hay pacientes.
      */
-    public Paciente atenderPaciente() {
-        for (int nivel = TRIAGE_MIN; nivel <= TRIAGE_MAX; nivel++) {
-            Lista lista = buckets[nivel - 1];
-            if (!lista.estaVacia()) {
-                totalPacientes--;
-                arbolAVL.eliminar(lista.frente().getId());
-                return lista.desencolar();
-            }
+  public Paciente atenderPaciente() {
+    for (int nivel = TRIAGE_MIN; nivel <= TRIAGE_MAX; nivel++) {
+        Lista lista = buckets[nivel - 1];
+        if (!lista.estaVacia()) {
+            totalPacientes--;
+            Paciente atendido = lista.desencolar();
+            arbolAVL.eliminar(atendido.getId());
+            historialAtenciones.push(atendido); // registro LIFO
+            return atendido;
         }
-
-        return null;
     }
+    return null;
+}
 
     /**
      * Consulta el siguiente paciente a atender sin extraerlo.
@@ -176,5 +180,32 @@ public class ColaTriage {
      */
     public ArbolAVL getArbolAVL(){
         return arbolAVL;
+        
+    }
+     public boolean deshacerUltimaAtencion() {
+        Paciente p = historialAtenciones.pop();
+        if (p == null) return false;
+        insertarPaciente(p);
+        return true;
+    }
+
+    // Retorna historial de atenciones en orden LIFO (mas reciente primero).
+    public Paciente[] getHistorialAtenciones() {
+        return historialAtenciones.obtenerHistorial();
+    }
+
+    // Indica si hay historial disponible.
+    public boolean hayHistorial() {
+        return !historialAtenciones.vacia();
+    }
+
+    // Cuantos pacientes han sido atendidos en total.
+    public int totalAtendidos() {
+        return historialAtenciones.tam();
+    }
+
+    // Expone la pila para la GUI.
+    public Pila getPila() {
+        return historialAtenciones;
     }
 }
