@@ -24,8 +24,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
 import grupo1.Clases.Paciente;
+import grupo1.Estructuras.ArbolAVL;
 import grupo1.Estructuras.ColaTriage;
-import grupo1.GUI.AVLpanel;
 
 public class GUI {
 	private static final Color BG = new Color(233, 236, 241);
@@ -44,6 +44,7 @@ public class GUI {
     private final JTextField sintomasField;
     private final JComboBox<String> sexoCombo; 
 
+	private final ArbolAVL arbolAVL = new ArbolAVL(); // Genera el arbol
 	private AVLpanel avlPanel; // panel con el arbol AVL
 
 	public GUI(ColaTriage colaTriage) {
@@ -96,7 +97,7 @@ public class GUI {
 		sexoCombo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
 		sexoCombo.setBackground(INSET);
 		sexoCombo.setForeground(TEXT);
-		sexoCombo.setBorder(crearRelieveInterno())
+		sexoCombo.setBorder(crearRelieveInterno());
 		triageCombo = new JComboBox<>(new Integer[] {1, 2, 3, 4, 5});
 		triageCombo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
 		triageCombo.setBackground(INSET);
@@ -142,7 +143,7 @@ public class GUI {
 		gbc.gridx = 0; 
 		gbc.gridy = 4; 
 		gbc.weightx = 0;
-		form.add(EPSLabel, gbc); //EPS
+		form.add(epsLabel, gbc); //EPS
 		
 		gbc.gridx = 1; 
 		gbc.weightx = 1;
@@ -218,7 +219,7 @@ public class GUI {
 		content.add(actions, BorderLayout.CENTER);
 		content.add(scroll, BorderLayout.SOUTH);
 
-		avlPanel = new AVLpanel(colaTriage.getArbolAVL());
+		avlPanel = new AVLpanel(arbolAVL);
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, avlPanel, content);
 		split.setDividerLocation(340);
 		split.setResizeWeight(0.35);
@@ -232,6 +233,11 @@ public class GUI {
 		siguiente.addActionListener(e -> mostrarSiguiente());
 		atender.addActionListener(e -> atenderPaciente());
 		estado.addActionListener(e -> actualizarEstado());
+
+		Paciente[] existentes = colaTriage.obtenerSiguientesPacientes(colaTriage.totalPacientes());
+		for (Paciente p : existentes) {
+			arbolAVL.insertar(p.getId(), p);
+		}
 
 		actualizarEstado();
 	}
@@ -277,17 +283,17 @@ public class GUI {
 			
 			int edad = Integer.parseInt(edadField.getText().trim());
 			
-			char sexo   = ((String) sexoCombo.getSelectedItem()).charAt(0);
+			char sexo = ((String) sexoCombo.getSelectedItem()).charAt(0);
 			
-	        String EPS  = epsField.getText().trim();
+			String EPS  = EPSField.getText().trim();
 			
 			if (EPS.isEmpty()) {
 				throw new IllegalArgumentException("Tienes que ingresar una EPS");
 			}
 			
-	        String sintoma = sintomasField.getText().trim();
+			String sintoma = sintomasField.getText().trim();
 			
-			if (sintoma.isEpmty()) {
+			if (sintoma.isEmpty()) {
 				throw new IllegalArgumentException ("Debes ingresar los sintomas del paciente");
 			}
 			
@@ -295,7 +301,8 @@ public class GUI {
 			
 			Paciente paciente = new Paciente(id, nombre, edad, sexo, EPS, sintoma, triage);
 			colaTriage.insertarPaciente(paciente);
-			long[] camino = colaTriage.getArbolAVL().obtenerCaminoBusqueda(id);
+			arbolAVL.insertar(paciente.getId(), paciente);
+			long[] camino = arbolAVL.obtenerCaminoBusqueda(id);
 			avlPanel.animarInsercion(camino, id);
 
 			salida.setText("Paciente registrado\n" + paciente + "\n\n" + estadoTexto());
@@ -304,7 +311,7 @@ public class GUI {
 			nombreField.setText("");
 			edadField.setText("");
 			EPSField.setText("");
-			sintomaField.setText("");
+			sintomasField.setText("");
 			sexoCombo.setSelectedIndex(0);
 			triageCombo.setSelectedIndex(0);
 			idField.requestFocus();
@@ -327,12 +334,16 @@ public class GUI {
 
 	private void atenderPaciente() {
 		Paciente sig = colaTriage.verSiguientePaciente();
-		// Capturar camino ANTES de eliminar
-		long[] camino = colaTriage.getArbolAVL().obtenerCaminoBusqueda(sig.getId());
 
+		if (sig == null) {
+			salida.setText("No hay pacientes para atender.\n\n" + estadoTexto());
+			return;
+		}
+		long[] camino = arbolAVL.obtenerCaminoBusqueda(sig.getId());
 		// Animar primero; la eliminación real ocurre al terminar
 		avlPanel.animarEliminacion(camino, sig.getId(), () -> {
 			Paciente atendido = colaTriage.atenderPaciente();
+			arbolAVL.eliminar(atendido.getId());
 			salida.setText("Paciente atendido\n" + atendido + "\n\n" + estadoTexto());
 			avlPanel.refrescar();
 		});

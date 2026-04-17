@@ -47,7 +47,7 @@ public class Paciente {
         return sexo;
     }
     public String getEPS(){
-        retunr EPS;
+        return EPS;
     }
     public String getsintomas(){
         return sintomas;

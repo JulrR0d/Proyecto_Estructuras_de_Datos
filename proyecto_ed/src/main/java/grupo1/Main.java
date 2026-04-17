@@ -48,16 +48,26 @@ public class Main {
 
     private static void precargarPacientes(ColaTriage colaTriage) {
         // Se pre-cargan 10 pacientes iniciales para simular una cola real.
-        colaTriage.insertarPaciente(new Paciente(101L, "Ana", (byte) 2));
-        colaTriage.insertarPaciente(new Paciente(102L, "Luis", (byte) 1));
-        colaTriage.insertarPaciente(new Paciente(103L, "Marta", (byte) 4));
-        colaTriage.insertarPaciente(new Paciente(104L, "Carlos", (byte) 3));
-        colaTriage.insertarPaciente(new Paciente(105L, "Elena", (byte) 2));
-        colaTriage.insertarPaciente(new Paciente(106L, "Pablo", (byte) 5));
-        colaTriage.insertarPaciente(new Paciente(107L, "Sofia", (byte) 1));
-        colaTriage.insertarPaciente(new Paciente(108L, "Diego", (byte) 3));
-        colaTriage.insertarPaciente(new Paciente(109L, "Nora", (byte) 4));
-        colaTriage.insertarPaciente(new Paciente(110L, "Jorge", (byte) 2));
+        colaTriage.insertarPaciente(new Paciente(101L, "Ana", 15, 'f',
+                                    "Famisanar", "Fisura", (byte) 2));
+        colaTriage.insertarPaciente(new Paciente(102L, "Luis", 11, 'm', 
+                                    "Sanitas", "Choque anafilactico", (byte) 1));
+        colaTriage.insertarPaciente(new Paciente(103L, "Marta", 12, 'f', 
+                                    "Famisanar", "Vomito, dolor de cabeza", (byte) 4));
+        colaTriage.insertarPaciente(new Paciente(104L, "Carlos", 20, 'm', 
+                                    "Compensar", "Dolores de pecho", (byte) 3));
+        colaTriage.insertarPaciente(new Paciente(105L, "Elena", 13, 'f', 
+                                    "Nueva EPS", "Desmayo", (byte) 2));
+        colaTriage.insertarPaciente(new Paciente(106L, "Pablo", 10, 'm', 
+                                    "Sanitas", "Fiebre, malestar general", (byte) 5));
+        colaTriage.insertarPaciente(new Paciente(107L, "Sofia", 30, 'f', 
+                                    "Salud Total", "Infarto", (byte) 1));
+        colaTriage.insertarPaciente(new Paciente(108L, "Diego", 17, 'm', 
+                                    "Famisanar", "Dolor de cabeza, mareo", (byte) 3));
+        colaTriage.insertarPaciente(new Paciente(109L, "Nora", 7, 'f', 
+                                    "Sura", "Hemorragias", (byte) 4));
+        colaTriage.insertarPaciente(new Paciente(110L, "Jorge", 40, 'm', 
+                                    "Coosalud", "Insensibilidad en un miembro", (byte) 2));
     }
 
     private static void aplicarTemaBasico() {

@@ -26,8 +26,6 @@ public class ColaTriage {
     // Cantidad total de pacientes en todas las listas.
     private int totalPacientes;
 
-    // Arból que almacena todos los pacientes del sistema
-    private final ArbolAVL arbolAVL;
     // Pila de historial: registra cada paciente atendido en orden LIFO.
     private final Pila historialAtenciones;
     /**
@@ -39,7 +37,6 @@ public class ColaTriage {
             buckets[i] = new Lista();
         }
         totalPacientes = 0;
-        arbolAVL = new ArbolAVL();
         historialAtenciones = new Pila();
     }
 
@@ -60,7 +57,6 @@ public class ColaTriage {
 
         // Mapeo 1..5 -> 0..4
         buckets[nivel - 1].encolar(paciente);
-        arbolAVL.insertar(paciente.getId(), paciente);
         totalPacientes++;
     }
 
@@ -81,7 +77,6 @@ public class ColaTriage {
         if (!lista.estaVacia()) {
             totalPacientes--;
             Paciente atendido = lista.desencolar();
-            arbolAVL.eliminar(atendido.getId());
             historialAtenciones.push(atendido); // registro LIFO
             return atendido;
         }
@@ -168,21 +163,7 @@ public class ColaTriage {
         }
     }
 
-    /**
-     * Busqua un paciente en el árbol AVL
-     */
-    public Paciente buscarPaciente(long id){
-        return arbolAVL.buscar(id);
-    }
-
-    /**
-     * hace público una vista del arbol AVL
-     */
-    public ArbolAVL getArbolAVL(){
-        return arbolAVL;
-        
-    }
-     public boolean deshacerUltimaAtencion() {
+    public boolean deshacerUltimaAtencion() {
         Paciente p = historialAtenciones.pop();
         if (p == null) return false;
         insertarPaciente(p);
