@@ -48,7 +48,7 @@ public class SalaEsperaGUI {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
-        JLabel titulo = new JLabel("Pantalla de Sala de espera");
+        JLabel titulo = new JLabel("Panel de Sala de Espera");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 34));
         titulo.setForeground(TEXT);
 
@@ -74,9 +74,8 @@ public class SalaEsperaGUI {
         principal.setOpaque(true);
         principal.setBackground(CARD);
         principal.setBorder(BorderFactory.createCompoundBorder(
-            crearRelieveInterno(),
-            BorderFactory.createEmptyBorder(24, 12, 24, 12)
-        ));
+                crearRelieveInterno(),
+                BorderFactory.createEmptyBorder(24, 12, 24, 12)));
 
         ahoraPanel.add(ahoraTitulo, BorderLayout.NORTH);
         ahoraPanel.add(principal, BorderLayout.CENTER);
@@ -99,9 +98,8 @@ public class SalaEsperaGUI {
             label.setOpaque(true);
             label.setBackground(CARD);
             label.setBorder(BorderFactory.createCompoundBorder(
-                crearRelieveExterno(),
-                BorderFactory.createEmptyBorder(12, 8, 12, 8)
-            ));
+                    crearRelieveExterno(),
+                    BorderFactory.createEmptyBorder(12, 8, 12, 8)));
             proximos[i] = label;
             filas.add(label);
         }
@@ -149,21 +147,19 @@ public class SalaEsperaGUI {
 
     private Border crearRelieveExterno() {
         return BorderFactory.createBevelBorder(
-            BevelBorder.RAISED,
-            new Color(255, 255, 255),
-            new Color(246, 249, 254),
-            new Color(193, 199, 210),
-            new Color(205, 211, 222)
-        );
+                BevelBorder.RAISED,
+                new Color(255, 255, 255),
+                new Color(246, 249, 254),
+                new Color(193, 199, 210),
+                new Color(205, 211, 222));
     }
 
     private Border crearRelieveInterno() {
         return BorderFactory.createBevelBorder(
-            BevelBorder.LOWERED,
-            new Color(255, 255, 255),
-            new Color(246, 249, 254),
-            new Color(193, 199, 210),
-            new Color(205, 211, 222)
-        );
+                BevelBorder.LOWERED,
+                new Color(255, 255, 255),
+                new Color(246, 249, 254),
+                new Color(193, 199, 210),
+                new Color(205, 211, 222));
     }
 }

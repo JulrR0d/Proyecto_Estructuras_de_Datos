@@ -40,9 +40,9 @@ public class GUI {
 	private final JComboBox<Integer> triageCombo;
 	private final JTextArea salida;
 	private final JTextField edadField;
-    private final JTextField EPSField;
-    private final JTextField sintomasField;
-    private final JComboBox<String> sexoCombo; 
+	private final JTextField EPSField;
+	private final JTextField sintomasField;
+	private final JComboBox<String> sexoCombo;
 
 	private final ArbolAVL arbolAVL = new ArbolAVL(); // Genera el arbol
 	private AVLpanel avlPanel; // panel con el arbol AVL
@@ -83,22 +83,22 @@ public class GUI {
 		JLabel idLabel = crearLabel("ID");
 		JLabel nombreLabel = crearLabel("Nombre");
 		JLabel triageLabel = crearLabel("Nivel triage");
-		JLabel edadLabel    = crearLabel("Edad");
-		JLabel epsLabel     = crearLabel("EPS");
+		JLabel edadLabel = crearLabel("Edad");
+		JLabel epsLabel = crearLabel("EPS");
 		JLabel sintomasLabel = crearLabel("Síntomas");
-		JLabel sexoLabel    = crearLabel("Sexo");
+		JLabel sexoLabel = crearLabel("Sexo");
 
 		idField = crearInput();
 		nombreField = crearInput();
 		edadField = crearInput();
 		EPSField = crearInput();
 		sintomasField = crearInput();
-		sexoCombo    = new JComboBox<>(new String[]{"M", "F"});
+		sexoCombo = new JComboBox<>(new String[] { "M", "F" });
 		sexoCombo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
 		sexoCombo.setBackground(INSET);
 		sexoCombo.setForeground(TEXT);
 		sexoCombo.setBorder(crearRelieveInterno());
-		triageCombo = new JComboBox<>(new Integer[] {1, 2, 3, 4, 5});
+		triageCombo = new JComboBox<>(new Integer[] { 1, 2, 3, 4, 5 });
 		triageCombo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
 		triageCombo.setBackground(INSET);
 		triageCombo.setForeground(TEXT);
@@ -107,65 +107,65 @@ public class GUI {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
-		form.add(idLabel, gbc); //ID
+		form.add(idLabel, gbc); // ID
 
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		form.add(idField, gbc); //ID
+		form.add(idField, gbc); // ID
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.weightx = 0;
-		form.add(nombreLabel, gbc); //NOMBRE
+		form.add(nombreLabel, gbc); // NOMBRE
 
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		form.add(nombreField, gbc); //NOMRBE
+		form.add(nombreField, gbc); // NOMRBE
 
-		gbc.gridx = 0; 
-		gbc.gridy = 2; 
+		gbc.gridx = 0;
+		gbc.gridy = 2;
 		gbc.weightx = 0;
-		form.add(edadLabel, gbc); //EDAD
-		
+		form.add(edadLabel, gbc); // EDAD
+
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		form.add(edadField, gbc); //EDAD
+		form.add(edadField, gbc); // EDAD
 
-		gbc.gridx = 0; 
-		gbc.gridy = 3; 
+		gbc.gridx = 0;
+		gbc.gridy = 3;
 		gbc.weightx = 0;
-		form.add(sexoLabel, gbc); //SEXO
-		
-		gbc.gridx = 1; 
-		gbc.weightx = 1;
-		form.add(sexoCombo, gbc); //SeXO
+		form.add(sexoLabel, gbc); // SEXO
 
-		gbc.gridx = 0; 
-		gbc.gridy = 4; 
+		gbc.gridx = 1;
+		gbc.weightx = 1;
+		form.add(sexoCombo, gbc); // SeXO
+
+		gbc.gridx = 0;
+		gbc.gridy = 4;
 		gbc.weightx = 0;
-		form.add(epsLabel, gbc); //EPS
-		
-		gbc.gridx = 1; 
-		gbc.weightx = 1;
-		form.add(EPSField, gbc);//EPS
+		form.add(epsLabel, gbc); // EPS
 
-		gbc.gridx = 0; 
-		gbc.gridy = 5; 
+		gbc.gridx = 1;
+		gbc.weightx = 1;
+		form.add(EPSField, gbc);// EPS
+
+		gbc.gridx = 0;
+		gbc.gridy = 5;
 		gbc.weightx = 0;
 		form.add(sintomasLabel, gbc);
-		
-		gbc.gridx = 1; 
+
+		gbc.gridx = 1;
 		gbc.weightx = 1;
 		form.add(sintomasField, gbc);
-				
+
 		gbc.gridx = 0;
 		gbc.gridy = 6;
 		gbc.weightx = 0;
-		form.add(triageLabel, gbc); //IVEL TRI
+		form.add(triageLabel, gbc); // IVEL TRI
 
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		form.add(triageCombo, gbc); //NIVEL TRI
+		form.add(triageCombo, gbc); // NIVEL TRI
 
 		JButton registrar = crearBoton("Registrar");
 		gbc.gridx = 7;
@@ -276,29 +276,33 @@ public class GUI {
 		try {
 			long id = Long.parseLong(idField.getText().trim());
 			String nombre = nombreField.getText().trim();
-			
+
+			if (arbolAVL.buscar(id) != null) {
+				throw new IllegalArgumentException("Ya existe un paciente con el ID " + id);
+			}
+
 			if (nombre.isEmpty()) {
 				throw new IllegalArgumentException("El nombre no puede estar vacio.");
 			}
-			
+
 			int edad = Integer.parseInt(edadField.getText().trim());
-			
+
 			char sexo = ((String) sexoCombo.getSelectedItem()).charAt(0);
-			
-			String EPS  = EPSField.getText().trim();
-			
+
+			String EPS = EPSField.getText().trim();
+
 			if (EPS.isEmpty()) {
 				throw new IllegalArgumentException("Tienes que ingresar una EPS");
 			}
-			
+
 			String sintoma = sintomasField.getText().trim();
-			
+
 			if (sintoma.isEmpty()) {
-				throw new IllegalArgumentException ("Debes ingresar los sintomas del paciente");
+				throw new IllegalArgumentException("Debes ingresar los sintomas del paciente");
 			}
-			
+
 			byte triage = ((Integer) triageCombo.getSelectedItem()).byteValue();
-			
+
 			Paciente paciente = new Paciente(id, nombre, edad, sexo, EPS, sintoma, triage);
 			colaTriage.insertarPaciente(paciente);
 			arbolAVL.insertar(paciente.getId(), paciente);
@@ -306,7 +310,7 @@ public class GUI {
 			avlPanel.animarInsercion(camino, id);
 
 			salida.setText("Paciente registrado\n" + paciente + "\n\n" + estadoTexto());
-			
+
 			idField.setText("");
 			nombreField.setText("");
 			edadField.setText("");
@@ -315,9 +319,10 @@ public class GUI {
 			sexoCombo.setSelectedIndex(0);
 			triageCombo.setSelectedIndex(0);
 			idField.requestFocus();
-			
+
 		} catch (NumberFormatException ex) {
-			JOptionPane.showMessageDialog(frame, "El ID debe ser numerico.", "Dato invalido", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "El ID debe ser numerico.", "Dato invalido",
+					JOptionPane.WARNING_MESSAGE);
 		} catch (IllegalArgumentException ex) {
 			JOptionPane.showMessageDialog(frame, ex.getMessage(), "Dato invalido", JOptionPane.WARNING_MESSAGE);
 		}
@@ -366,21 +371,19 @@ public class GUI {
 
 	private Border crearRelieveExterno() {
 		return BorderFactory.createBevelBorder(
-			BevelBorder.RAISED,
-			new Color(255, 255, 255),
-			new Color(247, 250, 255),
-			new Color(193, 199, 210),
-			new Color(205, 211, 222)
-		);
+				BevelBorder.RAISED,
+				new Color(255, 255, 255),
+				new Color(247, 250, 255),
+				new Color(193, 199, 210),
+				new Color(205, 211, 222));
 	}
 
 	private Border crearRelieveInterno() {
 		return BorderFactory.createBevelBorder(
-			BevelBorder.LOWERED,
-			new Color(255, 255, 255),
-			new Color(246, 249, 254),
-			new Color(193, 199, 210),
-			new Color(205, 211, 222)
-		);
+				BevelBorder.LOWERED,
+				new Color(255, 255, 255),
+				new Color(246, 249, 254),
+				new Color(193, 199, 210),
+				new Color(205, 211, 222));
 	}
 }
