@@ -2,6 +2,7 @@ package grupo1.Estructuras;
 
 import grupo1.Clases.Paciente;
 
+import grupo1.Features.RegistroCSV;
 /**
  * Cola de prioridad por buckets para triage medico.
  *
@@ -31,6 +32,10 @@ public class ColaTriage {
     /**
      * Construye la cola de triage con 5 listas vacias.
      */
+    private final RegistroCSV registro = new RegistroCSV();
+    /**
+    *    creacion del objeto para poder escribir el archivo csv
+    */
     public ColaTriage() {
         buckets = new Lista[TRIAGE_MAX];
         for (int i = 0; i < buckets.length; i++) {
@@ -78,6 +83,7 @@ public class ColaTriage {
             totalPacientes--;
             Paciente atendido = lista.desencolar();
             historialAtenciones.push(atendido); // registro LIFO
+            registro.registrarAtencion(atendido); //anota el paciente en le csv
             return atendido;
         }
     }
