@@ -1,4 +1,5 @@
-# graficador.py — Mismo de la tarea de complejidad
+# graficador.py. Mismo de la tarea de complejidad se toma solo en ns por los resultados de benchmark, se grafica en escala log-log y se muestra una tabla con los valores de la mediana.
+# Tanto CSV y grafico sera nombrado "datos" para no sobreescribir benchmarks de la entrega
 
 import sys
 import pandas as pd
@@ -45,19 +46,19 @@ agg = (
       .rename(columns={"Tiempo_ns": "Mediana_ns"})
 )
 
-# Unidad automática según rango de los datos
+# Unidad en ns
 max_ns = agg["Mediana_ns"].max()
-factor, unidad = (1, "ns") if max_ns < 1_000 else (1_000, "µs")
+factor, unidad = (1, "ns")
 
 agg["Mediana"] = agg["Mediana_ns"] / factor
 
 labels = list(agg["Label"].unique())
 ns     = sorted(agg["N"].unique())
 
-# Tabla pivot mediana por Label × N. Redondeo a 3 decimales.
+# Tabla pivot mediana por Label × N.
 tabla = (
     agg.pivot(index="N", columns="Label", values="Mediana")
-       .reindex(ns)[labels].round(3)
+       .reindex(ns)[labels]
 )
 
 # Layout dinamico
@@ -96,7 +97,7 @@ if len(y_all):
     ax_plot.set_ylim(y_all.min() * 0.4, y_all.max() * 3.5)
 
 ax_plot.set_title(
-    "Comparativa de estructuras y métodos\n"
+    "Comparati  va de estructuras y métodos\n"
     f"(Mediana del tiempo por operación · escala log-log · unidad: {unidad})",
     fontsize=13, fontweight="bold", pad=14)
 ax_plot.set_xlabel("Tamaño de entrada N", fontsize=11)
@@ -112,7 +113,7 @@ for n_val in ns:
     row = []
     for lbl in labels:
         val = tabla.at[n_val, lbl] if lbl in tabla.columns else np.nan
-        row.append(f"{val:.3f}" if pd.notna(val) else "—")
+        row.append(f"{val:.1f}" if pd.notna(val) else "—")
     cell_text.append(row)
 
 tbl = ax_table.table(
