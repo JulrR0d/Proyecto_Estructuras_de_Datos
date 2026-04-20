@@ -175,7 +175,7 @@ public class GUI {
 		Jbutton = buscarBtn = crearBoton("Buscar");
 
 		gbc.gridx = 0;
-		gbc.gridy = 5;
+		gbc.gridy = 7;
 		gbc.weightx = 0;
 		form.add(buscarLabel, gbc);
 
@@ -296,6 +296,26 @@ public class GUI {
 		boton.setForeground(TEXT);
 		boton.setBorder(crearRelieveExterno());
 		return boton;
+	}
+	//metodo para filtro o busqeuda de los pacientes
+	private void buscarPaciente(){
+		String texto = buscarField.getText();
+		if (texto.isEmpty()){
+			JOptionPane.showMessageDialog(frame, "ingresa un id", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		else if (texto != int){
+			JOptionPane.showMessageDialog(frame, "Ingresa un numero entero", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		Paciente busq_id = arbolAVL.buscar(id);
+		if (busq_id = null){
+			JOptionPane.showMessageDialog(frame, "El paciente no existe", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		else {
+			salida.setText("Paciente encontrado\n" + paciente + "\n\n" + estadoTexto());
+		}
 	}
 
 	private void registrarPaciente() {
