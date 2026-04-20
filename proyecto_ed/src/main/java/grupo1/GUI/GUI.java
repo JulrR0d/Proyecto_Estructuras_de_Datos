@@ -43,6 +43,7 @@ public class GUI {
 	private final JTextField EPSField;
 	private final JTextField sintomasField;
 	private final JComboBox<String> sexoCombo;
+	private final JTextField buscarField;
 
 	private final ArbolAVL arbolAVL = new ArbolAVL(); // Genera el arbol
 	private AVLpanel avlPanel; // panel con el arbol AVL
@@ -167,6 +168,30 @@ public class GUI {
 		gbc.weightx = 1;
 		form.add(triageCombo, gbc); // NIVEL TRI
 
+		//creacion del boton para la busqeuda de paciente mediante el id
+		
+		JLabel buscarLabel = crearLbel ("buscar paciente por id");
+		buscarField = crearInput();
+		Jbutton = buscarBtn = crearBoton("Buscar");
+
+		gbc.gridx = 0;
+		gbc.gridy = 5;
+		gbc.weightx = 0;
+		form.add(buscarLabel, gbc);
+
+		gbc.gridx = 1;
+		gbc.weightx = 1;
+		form.add(buscarField, gbc);
+
+		gbc.gridx = 7;
+		gbc.weightx = 0;
+		gbc.fill = GridBagConstraints.NONE;
+		form.add(buscarBtn, gbc);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		
+		//fin creacion boton para busqueda por id
+
+		
 		JButton registrar = crearBoton("Registrar");
 		gbc.gridx = 7;
 		gbc.weightx = 0;
@@ -233,6 +258,7 @@ public class GUI {
 		siguiente.addActionListener(e -> mostrarSiguiente());
 		atender.addActionListener(e -> atenderPaciente());
 		estado.addActionListener(e -> actualizarEstado());
+		buscarBtn.addActionListener(e -> buscarPaciente());
 
 		Paciente[] existentes = colaTriage.obtenerSiguientesPacientes(colaTriage.totalPacientes());
 		for (Paciente p : existentes) {
