@@ -301,21 +301,25 @@ public class GUI {
 	private void buscarPaciente(){
 		String texto = buscarField.getText();
 		if (texto.isEmpty()){
-			JOptionPane.showMessageDialog(frame, "ingresa un id", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "ingresa un id", "Campo vacio",JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		else if (texto != int){
-			JOptionPane.showMessageDialog(frame, "Ingresa un numero entero", JOptionPane.WARNING_MESSAGE);
-			return;
+		try{
+			Long id = Long.parseLong(texto);
+		} catch (NumberFormatException e){
+				JOptionPane.showMessageDialog(frame, "Ingresa un numero entero", "Dato inválido", JOptionPane.WARNING_MESSAGE);
+				return;
 		}
+		
 		Paciente busq_id = arbolAVL.buscar(id);
-		if (busq_id = null){
-			JOptionPane.showMessageDialog(frame, "El paciente no existe", JOptionPane.WARNING_MESSAGE);
+		if (busq_id == null){
+			JOptionPane.showMessageDialog(frame, "El paciente no existe", "No encontrado", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		else {
-			salida.setText("Paciente encontrado\n" + paciente + "\n\n" + estadoTexto());
+			salida.setText("Paciente encontrado\n" + busq_id + "\n\n" + estadoTexto());
 		}
+		buscarField.setText("");
 	}
 
 	private void registrarPaciente() {
