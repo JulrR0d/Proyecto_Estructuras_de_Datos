@@ -44,7 +44,7 @@ public class RegistroCSV {
     private String construirLinea(Paciente paciente) {
         String sintomas = paciente.getsintomas() == null ? "" : paciente.getsintomas().replace("\"", "'");
         if (sintomas.contains(",")) {
-            sintomas = "\"" + sintomas + "\"";
+            sintomas = '\'' + sintomas + '\'';
         }
         return String.join(",",
                 LocalDate.now().format(FMT_FECHA),

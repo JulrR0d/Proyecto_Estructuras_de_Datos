@@ -380,7 +380,7 @@ public class GUI {
 			idField.requestFocus();
 
 		} catch (NumberFormatException ex) {
-			JOptionPane.showMessageDialog(frame, "El ID debe ser numerico.", "Dato invalido",
+			JOptionPane.showMessageDialog(frame, "ID/Edad deben ser numericos.", "Dato invalido",
 					JOptionPane.WARNING_MESSAGE);
 		} catch (IllegalArgumentException ex) {
 			JOptionPane.showMessageDialog(frame, ex.getMessage(), "Dato invalido", JOptionPane.WARNING_MESSAGE);
