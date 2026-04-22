@@ -89,7 +89,7 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 ## Instalación
 1. Clonar el repositorio: `git clone <url-del-repo>`
 2. Abrir el proyecto con IntelliJ IDEA o VS Code
-3. Ejecutar `Main.java` para iniciar el sistema escogiendo entre acceder al sistema de triage o correr las pruebas de complejidad
+3. Ejecutar `Main.java` para iniciar el sistema escogiendo entre acceder a la interfaz de triage o correr las pruebas de complejidad
 
 ## Herramientas:
 
