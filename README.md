@@ -16,10 +16,10 @@
 
 ---
 
-## 📝 Descripción del Proyecto
+## Descripción del Proyecto
 El **Triage Stage Emergency** es un sistema inteligente de selección y clasificación de pacientes basado en necesidades terapéuticas y recursos disponibles. A diferencia del modelo tradicional por orden de llegada, este sistema implementa algoritmos de priorización clínica para asegurar que las emergencias vitales sean atendidas de inmediato.
 
-### 🎯 Objetivos
+### Objetivos
 * Gestionar el flujo masivo de pacientes en una sala de emergencias.
 * Garantizar la asignación de atención mediante niveles de urgencia (1-5).
 * Optimizar la búsqueda y recuperación de información de pacientes en tiempo real.
@@ -54,7 +54,7 @@ El sistema no utiliza una lista única, sino un arreglo de estructuras paralelas
 - Gestión de Prioridad Multinivel: Clasificación y ordenamiento automático en 5 categorías de urgencia con complejidad $O(1)$.
 - Priorización automática: Mantener una fila de espera donde los pacientes con menor nivel de Triage siempre estén al principio.
 - Inmutabilidad temporal: Una vez registrado el ingreso, la fecha y hora no deben ser modificables por el usuario, asegurando la transparencia en las auditorías de tiempos de espera.
-- Acceso directo: Consultar el estado y datos de un paciente mediante su ID.
+- Acceso directo: Consultar los datos de un paciente mediante su ID.
 - Atención: Extraer al paciente de mayor prioridad del sistema cuando un médico quede disponible.
 - Estadísticas: Listar cuántos pacientes han sido atendidos por cada nivel de severidad.
 - Resolución de Conflictos Temporales: Algoritmo FIFO integrado para el desempate de pacientes con la misma prioridad médica.
@@ -89,13 +89,12 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 ## Instalación
 1. Clonar el repositorio: `git clone <url-del-repo>`
 2. Abrir el proyecto con IntelliJ IDEA o VS Code
-3. Ejecutar `Main.java` para iniciar el sistema
-4. Ejecutar `Benchmark.java` para ver el análisis de rendimiento
+3. Ejecutar `Main.java` para iniciar el sistema escogiendo entre acceder al sistema de triage o correr las pruebas de complejidad
 
 ## Herramientas:
 
 -  Java
--  SQL
+-  Python
 -  Git
 
 ## Estructura del proyecto:
