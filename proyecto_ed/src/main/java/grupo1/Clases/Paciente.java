@@ -37,47 +37,59 @@ public class Paciente {
     public long getId() {
         return id;
     }
+
     public String getNombre() {
         return nombre;
     }
+
     public int getEdad() {
         return edad;
     }
+
     public char getSexo() {
         return sexo;
     }
-    public String getEPS(){
+
+    public String getEPS() {
         return EPS;
     }
-    public String getsintomas(){
+
+    public String getsintomas() {
         return sintomas;
     }
+
     public LocalDate getFechaIngreso() {
         return fechaIngreso;
     }
+
     public LocalTime getHoraIngreso() {
         return horaIngreso;
     }
+
     public Byte getNivelTriage() {
         return nivelTriage;
     }
 
     // Métodos Set
-    public void setId(long id) { //pdoriamso eliminar este pq igual es mejor no editar el id si es la manera en la que vamos a clasificarlos para el arbol
+    public void setId(long id) { // pdoriamso eliminar este pq igual es mejor no editar el id si es la manera en
+                                 // la que vamos a clasificarlos para el arbol
         this.id = id;
     }
+
     public void setNombre(String nombre) {
-        if (nombre  == null || nombre.trim().isEmpty()){
+        if (nombre == null || nombre.trim().isEmpty()) {
             throw new RuntimeException("Debes ingresar un nombre.");
         }
         this.nombre = nombre;
     }
+
     public void setEdad(int edad) {
         if (edad < 0 || edad > 100) {
             throw new RuntimeException("Edad invalida.");
         }
         this.edad = edad;
     }
+
     public void setSexo(char sexo) {
         if (sexo == 'M' || sexo == 'F') {
             this.sexo = sexo;
@@ -85,18 +97,23 @@ public class Paciente {
             throw new RuntimeException("Sexo invalido (M o F)");
         }
     }
+
     public void setEps(String EPS) {
         this.EPS = EPS;
     }
+
     public void setSintomas(String sintomas) {
         this.sintomas = sintomas;
     }
+
     public void setFechaIngreso(LocalDate fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
     }
+
     public void setHoraIngreso(LocalTime horaIngreso) {
         this.horaIngreso = horaIngreso;
     }
+
     public void setNivelTriage(Byte nivelTriage) {
         validarNivelTriage(nivelTriage);
         this.nivelTriage = nivelTriage;
@@ -113,15 +130,14 @@ public class Paciente {
 
     @Override
     public String toString() {
-        return "Paciente {" +
-                "id =" + id +
-                ", nombre ='" + nombre + '\'' +
-                ", edad = " + edad + 
-                ", EPS = " + EPS +
-                ", nivelTriage =" + nivelTriage +
-                ", fechaIngreso =" + fechaIngreso + ", a las " + horaIngreso +
-                ", sintomas =" + sintomas +
-                '}';
+        return "Paciente con " +
+                "ID: " + id +
+                ", Nombre: " + nombre +
+                ", Edad: " + edad +
+                ", EPS: " + EPS +
+                ", Nivel de Triage: " + nivelTriage +
+                ", Fecha de Ingreso: " + fechaIngreso + ", a las " + horaIngreso +
+                ", Sintomas: " + sintomas;
     }
-    
+
 }

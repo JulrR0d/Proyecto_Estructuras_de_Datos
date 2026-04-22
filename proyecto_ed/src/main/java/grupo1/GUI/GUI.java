@@ -88,6 +88,8 @@ public class GUI {
 		JLabel epsLabel = crearLabel("EPS");
 		JLabel sintomasLabel = crearLabel("Síntomas");
 		JLabel sexoLabel = crearLabel("Sexo");
+		JLabel divisorRegistroBusqueda = crearLabel(
+				"===============");
 
 		idField = crearInput();
 		nombreField = crearInput();
@@ -162,20 +164,34 @@ public class GUI {
 		gbc.gridx = 0;
 		gbc.gridy = 6;
 		gbc.weightx = 0;
-		form.add(triageLabel, gbc); // IVEL TRI
+		form.add(triageLabel, gbc); // NIVEL TRI
 
 		gbc.gridx = 1;
 		gbc.weightx = 1;
 		form.add(triageCombo, gbc); // NIVEL TRI
 
-		//creacion del boton para la busqeuda de paciente mediante el id
-		
-		JLabel buscarLabel = crearLbel ("buscar paciente por id");
-		buscarField = crearInput();
-		Jbutton = buscarBtn = crearBoton("Buscar");
+		JButton registrar = crearBoton("Registrar");
+		gbc.gridx = 7;
+		gbc.weightx = 0;
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.anchor = GridBagConstraints.WEST;
+		form.add(registrar, gbc);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.WEST;
+
+		// Creacion del boton para la busqeuda de paciente mediante el ID
 
 		gbc.gridx = 0;
-		gbc.gridy = 7;
+		gbc.gridy = 8;
+		gbc.weightx = 0;
+		form.add(divisorRegistroBusqueda, gbc); // ID
+
+		JLabel buscarLabel = crearLabel("Buscar paciente por ID");
+		buscarField = crearInput();
+		JButton buscarBtn = crearBoton("Buscar");
+
+		gbc.gridx = 0;
+		gbc.gridy = 10;
 		gbc.weightx = 0;
 		form.add(buscarLabel, gbc);
 
@@ -188,18 +204,8 @@ public class GUI {
 		gbc.fill = GridBagConstraints.NONE;
 		form.add(buscarBtn, gbc);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		
-		//fin creacion boton para busqueda por id
 
-		
-		JButton registrar = crearBoton("Registrar");
-		gbc.gridx = 7;
-		gbc.weightx = 0;
-		gbc.fill = GridBagConstraints.NONE;
-		gbc.anchor = GridBagConstraints.WEST;
-		form.add(registrar, gbc);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.anchor = GridBagConstraints.WEST;
+		// Fin creacion boton para busqueda por ID
 
 		JPanel actions = new JPanel(new GridBagLayout());
 		actions.setOpaque(false);
@@ -297,29 +303,32 @@ public class GUI {
 		boton.setBorder(crearRelieveExterno());
 		return boton;
 	}
-	//metodo para filtro o busqeuda de los pacientes
-	private void buscarPaciente(){
-		String texto = buscarField.getText();
-		if (texto.isEmpty()){
-			JOptionPane.showMessageDialog(frame, "ingresa un id", "Campo vacio",JOptionPane.WARNING_MESSAGE);
+
+	// Metodo para busqueda de los pacientes
+	private void buscarPaciente() {
+		String textoID = buscarField.getText();
+		if (textoID.isEmpty()) {
+			JOptionPane.showMessageDialog(frame, "Ingresa un id", "Campo vacio", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		try{
-			Long id = Long.parseLong(texto);
-		} catch (NumberFormatException e){
-				JOptionPane.showMessageDialog(frame, "Ingresa un numero entero", "Dato inválido", JOptionPane.WARNING_MESSAGE);
+		try {
+			Long idBuscar = Long.parseLong(textoID.trim());
+			Paciente busq_id = arbolAVL.buscar(idBuscar);
+			if (busq_id == null) {
+				JOptionPane.showMessageDialog(frame, "El paciente no existe", "No encontrado",
+						JOptionPane.WARNING_MESSAGE);
 				return;
-		}
-		
-		Paciente busq_id = arbolAVL.buscar(id);
-		if (busq_id == null){
-			JOptionPane.showMessageDialog(frame, "El paciente no existe", "No encontrado", JOptionPane.WARNING_MESSAGE);
+			} else {
+				salida.setText(
+						"Paciente encontrado con ID dado\n\n" + busq_id + "\n\n" + estadoTexto());
+			}
+			buscarField.setText("");
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(frame, "Ingresa un numero entero", "Dato inválido",
+					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		else {
-			salida.setText("Paciente encontrado\n" + busq_id + "\n\n" + estadoTexto());
-		}
-		buscarField.setText("");
+
 	}
 
 	private void registrarPaciente() {
@@ -359,7 +368,7 @@ public class GUI {
 			long[] camino = arbolAVL.obtenerCaminoBusqueda(id);
 			avlPanel.animarInsercion(camino, id);
 
-			salida.setText("Paciente registrado\n" + paciente + "\n\n" + estadoTexto());
+			salida.setText("Paciente registrado\n\n" + paciente + "\n\n" + estadoTexto());
 
 			idField.setText("");
 			nombreField.setText("");
@@ -384,7 +393,7 @@ public class GUI {
 			salida.setText("No hay pacientes en espera.\n\n" + estadoTexto());
 			return;
 		}
-		salida.setText("Siguiente paciente\n" + siguiente + "\n\n" + estadoTexto());
+		salida.setText("Siguiente paciente\n\n" + siguiente + "\n\n" + estadoTexto());
 	}
 
 	private void atenderPaciente() {
@@ -399,7 +408,7 @@ public class GUI {
 		avlPanel.animarEliminacion(camino, sig.getId(), () -> {
 			Paciente atendido = colaTriage.atenderPaciente();
 			arbolAVL.eliminar(atendido.getId());
-			salida.setText("Paciente atendido\n" + atendido + "\n\n" + estadoTexto());
+			salida.setText("Paciente atendido\n\n" + atendido + "\n\n" + estadoTexto());
 			avlPanel.refrescar();
 		});
 	}
