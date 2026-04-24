@@ -10,11 +10,11 @@ import java.time.format.DateTimeFormatter;
 /*
 se crea el archivo para pdoer egenrar un resumen/historial de lso pacientes atendidos
 archivo llamado historial_atenciones.csv y se crea en el directorio  de ejecucion
-se hace mediante la agregacion de cada paciente retirado de COla triage
+se hace mediante la agregacion de cada paciente retirado de Cola triage
 */
 public class RegistroCSV {
 
-    private static final String ARCHIVO_CSV = "proyecto_ed/src/main/java/grupo1/Features/historial_atenciones.csv";
+    private static final String ARCHIVO_CSV = "proyecto_ed/src/main/java/grupo1/Reportes/historial_atenciones.csv";
     private static final DateTimeFormatter FMT_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter FMT_HORA = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final String ENCABEZADO = "FechaAtencion,HoraAtencion,ID,Nombre,Edad,Sexo,EPS,NivelTriage,Sintomas";

@@ -26,6 +26,7 @@ import javax.swing.border.Border;
 import grupo1.Clases.Paciente;
 import grupo1.Estructuras.ArbolAVL;
 import grupo1.Estructuras.ColaTriage;
+import grupo1.Features.ResumenTXT;
 
 public class GUI {
 	private static final Color BG = new Color(233, 236, 241);
@@ -229,6 +230,14 @@ public class GUI {
 		actionGbc.gridy = 0;
 		actions.add(estado, actionGbc);
 
+		//creacion boton apra generar reporte
+		JButton reporte = crearBoton("Generar reporte");
+
+		actionGbc.gridx = 1;
+		actionGbc.gridy = 1;
+		actions.add(reporte, actionGbc);
+		//fin creacion boton generacion de resporte
+
 		salida = new JTextArea();
 		salida.setEditable(false);
 		salida.setLineWrap(true);
@@ -265,6 +274,7 @@ public class GUI {
 		atender.addActionListener(e -> atenderPaciente());
 		estado.addActionListener(e -> actualizarEstado());
 		buscarBtn.addActionListener(e -> buscarPaciente());
+		reporte.addActionListener(e -> generarReporte());
 
 		Paciente[] existentes = colaTriage.obtenerSiguientesPacientes(colaTriage.totalPacientes());
 		for (Paciente p : existentes) {
@@ -329,6 +339,18 @@ public class GUI {
 			return;
 		}
 
+	}
+
+	//metodo para generar reporte en txt
+
+	private void generarReporte() {
+		new ResumenTXT().generarResumenDia();
+		JOptionPane.showMessageDialog(
+			frame,
+			"Reporte del dia generado",
+			"Reporte",
+			JOptionPane.INFORMATION_MESSAGE
+		);
 	}
 
 	private void registrarPaciente() {
