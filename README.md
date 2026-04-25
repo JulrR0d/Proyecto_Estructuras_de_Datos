@@ -106,7 +106,14 @@ C:.
     │   │   └───java
     │   │       └───grupo1
     │   │           ├───Benchmark
-    │   │           │   └───Benchmark.java
+    │   │           │   ├───Benchmark.java
+    │   │           │   ├───datosAVL.csv
+    │   │           │   ├───datosAVL.png
+    │   │           │   ├───datosCola.csv
+    │   │           │   ├───datosCola.png
+    │   │           │   ├───datosTodo.csv
+    │   │           │   ├───datosTodo.csv
+    │   │           │   └───graficador.py
     │   │           ├───Clases
     │   │           │   └───Paciente.java
     │   │           ├───Estructuras
@@ -115,9 +122,14 @@ C:.
     │   │           │   ├───Lista.java
     │   │           │   ├───Nodo.java
     │   │           │   └───Pila.java
+    │   │           ├───Features
+    │   │           │   ├───RegistroCSV.java
+    │   │           │   └───ResumenTXT.java
     │   │           ├───GUI
+    │   │           │   ├───AVLpanel.java
+    │   │           │   ├───GUI.java
+    │   │           │   └───SalaEsperaGUI.java
     │   │           └───Main.java
     │   └───test
     └───target
 ```
-
