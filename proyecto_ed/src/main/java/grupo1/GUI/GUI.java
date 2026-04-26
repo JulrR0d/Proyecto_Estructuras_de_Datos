@@ -26,6 +26,8 @@ import javax.swing.border.Border;
 import grupo1.Clases.Paciente;
 import grupo1.Estructuras.ArbolAVL;
 import grupo1.Estructuras.ColaTriage;
+import grupo1.Estructuras.Pila;
+import grupo1.Features.RegistroCSV;
 import grupo1.Features.ResumenTXT;
 
 public class GUI {
@@ -47,9 +49,19 @@ public class GUI {
 	private final JTextField buscarField;
 
 	private final ArbolAVL arbolAVL = new ArbolAVL(); // Genera el arbol
+
 	private AVLpanel avlPanel; // panel con el arbol AVL
 
+	private final RegistroCSV registro = new RegistroCSV();
+	/**
+	 * creacion del objeto para poder escribir el archivo csv
+	 */
+
+	// Pila de historial: registra cada paciente atendido en orden LIFO.
+	private final Pila historialAtenciones = new Pila();
+
 	public GUI(ColaTriage colaTriage) {
+
 		this.colaTriage = colaTriage;
 
 		frame = new JFrame("Triage - Control");
@@ -230,13 +242,13 @@ public class GUI {
 		actionGbc.gridy = 0;
 		actions.add(estado, actionGbc);
 
-		//creacion boton apra generar reporte
+		// creacion boton apra generar reporte
 		JButton reporte = crearBoton("Generar reporte");
 
 		actionGbc.gridx = 1;
 		actionGbc.gridy = 1;
 		actions.add(reporte, actionGbc);
-		//fin creacion boton generacion de resporte
+		// fin creacion boton generacion de resporte
 
 		salida = new JTextArea();
 		salida.setEditable(false);
@@ -341,16 +353,15 @@ public class GUI {
 
 	}
 
-	//metodo para generar reporte en txt
+	// metodo para generar reporte en txt
 
 	private void generarReporte() {
 		new ResumenTXT().generarResumenDia();
 		JOptionPane.showMessageDialog(
-			frame,
-			"Reporte del dia generado",
-			"Reporte",
-			JOptionPane.INFORMATION_MESSAGE
-		);
+				frame,
+				"Reporte del dia generado",
+				"Reporte",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void registrarPaciente() {
@@ -429,6 +440,8 @@ public class GUI {
 		// Animar primero; la eliminación real ocurre al terminar
 		avlPanel.animarEliminacion(camino, sig.getId(), () -> {
 			Paciente atendido = colaTriage.atenderPaciente();
+			registro.registrarAtencion(atendido); // anota el paciente en le csv
+			historialAtenciones.push(atendido); // registro LIFO
 			arbolAVL.eliminar(atendido.getId());
 			salida.setText("Paciente atendido\n\n" + atendido + "\n\n" + estadoTexto());
 			avlPanel.refrescar();
@@ -448,6 +461,15 @@ public class GUI {
 			sb.append("Triage ").append(i).append(": ").append(colaTriage.pacientesPorNivel(i)).append("\n");
 		}
 		return sb.toString();
+	}
+
+	// Deshace ultima atencion
+	public boolean deshacerUltimaAtencion() {
+		Paciente p = historialAtenciones.pop();
+		if (p == null)
+			return false;
+		colaTriage.insertarPaciente(p);
+		return true;
 	}
 
 	private Border crearRelieveExterno() {

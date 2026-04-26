@@ -36,7 +36,7 @@ public class Benchmark {
 
     // Tamanos de N hasta 10 a la 7
     static final long[] NS = {
-            10L, 100L, 1_000L, 10_000L, 100_000L, 1_000_000L, 10_000_000L
+            10L, 100L, 1_000L, 10_000L, 100_000L, 1_000_000L, // 10_000_000L
     };
 
     // N usado en warmup lo suficientemente grande para compilar rotaciones AVL
