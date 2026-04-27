@@ -36,7 +36,7 @@ public class RegistroCSV {
             }
             printWriter.println(construirLinea(paciente));
         } catch (IOException e) {
-            System.err.println("error en CSV: " + e.getMessage());
+            System.err.println("Error en CSV: " + e.getMessage());
         }
     }
 

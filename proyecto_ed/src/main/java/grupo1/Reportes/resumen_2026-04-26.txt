@@ -1,0 +1,18 @@
+=========================================
+   RESUMEN ATENCION - 2026-04-26
+=========================================
+
+total de pacientes atendidos el 2026-04-26--->1
+
+pacientes atendidos por nivel de triage:
+  Nivel 1: 1 paciente(s)
+  Nivel 2: 0 paciente(s)
+  Nivel 3: 0 paciente(s)
+  Nivel 4: 0 paciente(s)
+  Nivel 5: 0 paciente(s)
+
+-----------------------------------------
+paciente: |Fecha | Hora | ID | Nombre | Edad | Sexo | EPS | Nivel | Sintomas |
+-----------------------------------------
+  2026-04-26,20:40:44,102,Luis,11,m,Sanitas,1,Choque anafilactico
+=========================================
