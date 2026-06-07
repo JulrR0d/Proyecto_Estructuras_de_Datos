@@ -1,0 +1,5 @@
+FechaAtencion,HoraAtencion,ID,Nombre,Edad,Sexo,EPS,NivelTriage,Sintomas
+2026-06-06,22:46:22,102,Luis,11,m,Sanitas,1,Choque anafilactico
+2026-06-06,22:46:34,107,Sofia,30,f,Salud Total,1,Infarto
+2026-06-06,22:46:45,101,Ana,15,f,Famisanar,2,Fisura
+2026-06-06,22:47:05,105,Elena,13,f,Nueva EPS,2,Desmayo
