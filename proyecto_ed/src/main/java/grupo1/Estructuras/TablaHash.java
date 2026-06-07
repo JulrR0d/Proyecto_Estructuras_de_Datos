@@ -8,7 +8,8 @@ import java.math.BigInteger; // Se uso BigInteger para evitar problemas de overf
  * Tabla hash con chaining de listas enlazadas para almacenar referencias de
  * pacientes por su ID.
  *
- * Diseno basado en la teoria de Michael Levis vista en clase:
+ * Diseno basado en la teoria de Michael Levis vista en clase y los quices de
+ * OnlineGDB:
  * - Arreglo de m listas enlazadas (buckets), cada entrada guarda pares de (id,
  * paciente)
  * - Funcion hash de familia universal para enteros: h(x) = ((a*x + b) mod p)
@@ -62,10 +63,10 @@ public class TablaHash {
     // h(x) = ((A*x + B) mod P) mod m. Complejidad O(1)
     // Se utilizo Math.floorMod para garantizar resultado positivo ante
     // desbordamiento
-    private int calcularHash(long id) {
-        // Se usa big integer para evitar problemas de overflow con A*x + B, es una
-        // medida preventiva
 
+    // Se usa big integer para evitar problemas de overflow con A*x + B, es una
+    // medida preventiva
+    private int calcularHash(long id, int cap) {
         BigInteger valId = BigInteger.valueOf(id);
         BigInteger valA = BigInteger.valueOf(A);
         BigInteger valB = BigInteger.valueOf(B);
@@ -74,12 +75,14 @@ public class TablaHash {
         // ((A * id) + B) mod P
         BigInteger r = valA.multiply(valId).add(valB).mod(valP);
 
-        // Resultado mod m
-        return r.intValue() % capacidad;
+        // r.longValue() mantiene el numero positivo real porque P cabe en un long.
+        // Al aplicar % cap se garantiza un indice valido entre 0 y (cap - 1) como
+        // indica la teoria
+        return (int) (r.longValue() % cap);
     }
 
     private int hash(long id) {
-        return calcularHash(id);
+        return calcularHash(id, this.capacidad);
     }
 
     // Inserta un paciente por su ID.
@@ -175,14 +178,13 @@ public class TablaHash {
         int nuevaCapacidad = capacidad * 2;
         Entrada[] nuevosBuckets = new Entrada[nuevaCapacidad];
 
-        // Reinsertar cada entrada con la nueva capacidad
+        // Reinsertar cada entrada distribuyendola en el nuevo espacio
         for (int i = 0; i < capacidad; i++) {
             Entrada actual = buckets[i];
             while (actual != null) {
-                Entrada siguiente = actual.siguiente; // Guardar antes de modificar
+                Entrada siguiente = actual.siguiente; // Guardar referencia
 
-                // Recalcular indice con nueva capacidad
-                int nuevoIdx = calcularHash(actual.id) % nuevaCapacidad;
+                int nuevoIdx = calcularHash(actual.id, nuevaCapacidad);
 
                 // Reinsertar al inicio del nuevo bucket
                 actual.siguiente = nuevosBuckets[nuevoIdx];
@@ -192,8 +194,8 @@ public class TablaHash {
             }
         }
 
-        capacidad = nuevaCapacidad;
-        buckets = nuevosBuckets;
+        this.capacidad = nuevaCapacidad;
+        this.buckets = nuevosBuckets;
     }
 
     // Los siguientes son de complejidad O(1)

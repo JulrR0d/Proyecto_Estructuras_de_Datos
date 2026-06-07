@@ -1,16 +1,18 @@
 package grupo1.Benchmark;
 
 import grupo1.Clases.Paciente;
-import grupo1.Estructuras.ArbolAVL;
+import grupo1.Estructuras.TablaHash;
 import grupo1.Estructuras.ColaTriage;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-// Benchmark de complejidad empirica para ColaTriage y ArbolAVL.
+// Benchmark de complejidad empirica para ColaTriage y TablaHash.
 // Realizado con base en la guia de Moodle de la tarea previa, indicaciones y correciones del monitor y
 // desarrollo con apoyo de IA para garantizar integridad de mediciones.
+//
+// Para la tercera entrega solo se cambio las estructuras a probar. De arbolAVL se pasa a TablaHash. De ColaTriage se pasa al Heap. La logica de medicion, metodologia, CSV y graficado se mantiene igual para poder comparar con la entrega previa.
 //
 // USO: Se ejecuta directamente y los datos se acumulan en benchmark/datos.csv con append. Al final se corre el graficador
 //
@@ -39,8 +41,8 @@ public class Benchmark {
             10L, 100L, 1_000L, 10_000L, 100_000L, 1_000_000L, // 10_000_000L
     };
 
-    // N usado en warmup lo suficientemente grande para compilar rotaciones AVL
-    // y recorridos de lista, pero sin tardar demasiado.
+    // N usado en warmup lo suficientemente grande para compilar rehash
+    // y recorridos de cadena, pero sin tardar demasiado.
     static final long N_WARMUP = 10_000L;
 
     // Genera un Paciente con ID dado y nivel de triage aleatorio entre 1 y 5.
@@ -49,9 +51,7 @@ public class Benchmark {
         return new Paciente(id, "P" + id, 0, 'M', "EPS", "ABC", nivel);
     }
 
-    // -------------------------------------------------------------------------
     // Mecanismo central de medicion
-    // -------------------------------------------------------------------------
 
     // Llena la estructura con N elementos (fill), luego mide K operaciones
     // (measure) y devuelve el promedio en ns.
@@ -157,79 +157,81 @@ public class Benchmark {
         guardarCSV(est, met, data);
     }
 
-    // -------------------------------------------------------------------------
     // main
-    // -------------------------------------------------------------------------
     public static void main(String[] args) throws Exception {
 
         // ColaTriage
         // Buckets de 5 listas FIFO. Todas las operaciones son O(1) porque el
         // numero de niveles de triage es constante (5).
+        /*
+         * {
+         * ColaTriage[] cola = new ColaTriage[1];
+         * Random rng = new Random(SEED);
+         * 
+         * Runnable[] factory = { () -> { // factory, nueva cola vacia y RNG reseteado
+         * cola[0] = new ColaTriage();
+         * rng.setSeed(SEED);
+         * } };
+         * 
+         * // Llenado (fill), inserta un paciente con ID aleatorio. O(1).
+         * Runnable fill = () -> cola[0].insertarPaciente(
+         * paciente(Math.abs(rng.nextLong()) % 1_000_000_000L + 1, rng));
+         * 
+         * // insertarPaciente O(1)
+         * run("ColaTriage", "insertarPaciente", factory, fill,
+         * v -> cola[0].insertarPaciente(paciente(v, new Random(v))),
+         * null); // no necesita targets existentes
+         * 
+         * // atenderPaciente O(1) extrae el de mayor prioridad
+         * run("ColaTriage", "atenderPaciente", factory, fill,
+         * v -> cola[0].atenderPaciente(),
+         * null);
+         * 
+         * // verSiguientePaciente O(1) consulta sin extraer
+         * run("ColaTriage", "verSiguientePaciente", factory, fill,
+         * v -> cola[0].verSiguientePaciente(),
+         * null);
+         * 
+         * // obtenerSiguientesPacientes O(k)
+         * run("ColaTriage", "obtenerSiguientes", factory, fill,
+         * v -> cola[0].obtenerSiguientesPacientes(10),
+         * null);
+         * }
+         */
+
+        // TablaHash
+        // Tabla hash con encadenamiento y familia universal. Insertar, buscar y
+        // eliminar son O(1) promedio con alpha constante.
         {
-            ColaTriage[] cola = new ColaTriage[1];
-            Random rng = new Random(SEED);
-
-            Runnable[] factory = { () -> { // factory, nueva cola vacia y RNG reseteado
-                cola[0] = new ColaTriage();
-                rng.setSeed(SEED);
-            } };
-
-            // Llenado (fill), inserta un paciente con ID aleatorio. O(1).
-            Runnable fill = () -> cola[0].insertarPaciente(
-                    paciente(Math.abs(rng.nextLong()) % 1_000_000_000L + 1, rng));
-
-            // insertarPaciente O(1)
-            run("ColaTriage", "insertarPaciente", factory, fill,
-                    v -> cola[0].insertarPaciente(paciente(v, new Random(v))),
-                    null); // no necesita targets existentes
-
-            // atenderPaciente O(1) extrae el de mayor prioridad
-            run("ColaTriage", "atenderPaciente", factory, fill,
-                    v -> cola[0].atenderPaciente(),
-                    null);
-
-            // verSiguientePaciente O(1) consulta sin extraer
-            run("ColaTriage", "verSiguientePaciente", factory, fill,
-                    v -> cola[0].verSiguientePaciente(),
-                    null);
-
-            // obtenerSiguientesPacientes O(k)
-            run("ColaTriage", "obtenerSiguientes", factory, fill,
-                    v -> cola[0].obtenerSiguientesPacientes(10),
-                    null);
-        }
-
-        // ArbolAVL
-        // Arbol balanceado por ID. Insertar, buscar y eliminar son O(log n).
-        {
-            ArbolAVL[] avl = new ArbolAVL[1];
-            Random rngAvl = new Random(SEED);
+            TablaHash[] hash = new TablaHash[1];
+            Random rngHash = new Random(SEED);
 
             // Capacidad maxima de la muestra de IDs reales
             final int CAP_MUESTRA = 500_000;
-            long[] muestraAvl = new long[CAP_MUESTRA];
+            long[] muestraHash = new long[CAP_MUESTRA];
             int[] idxMuestra = { 0 };
 
-            // Factory. Arbol vacio, rng y muestra reseteados
+            // Factory. Tabla vacia, rng y muestra reseteados
             Runnable[] factory = { () -> {
-                avl[0] = new ArbolAVL();
-                rngAvl.setSeed(SEED);
+                hash[0] = new TablaHash();
+                rngHash.setSeed(SEED);
                 idxMuestra[0] = 0;
                 // Limpia la muestra para que no queden IDs del run anterior
-                Arrays.fill(muestraAvl, 0L);
+                Arrays.fill(muestraHash, 0L);
             } };
 
             // Llenado (fill), inserta un paciente con ID aleatorio.
-            // Si el ID ya existe (hay una colision), reintenta hasta lograr N exacto.
-            // Guarda cada ID real insertado en muestraAvl.
+            // Si el ID ya existe (hay una colision, ojo pero no colision de hash sino
+            // colision de IDs), reintenta hasta lograr N exacto.
+            // Guarda cada ID real insertado en muestraHash.
             Runnable fill = () -> {
                 boolean insertado = false;
                 while (!insertado) {
-                    long id = Math.abs(rngAvl.nextLong()) + 1;
+                    long id = Math.abs(rngHash.nextLong()) + 1;
                     try {
-                        avl[0].insertar(id, paciente(id, new Random(id)));
+                        hash[0].insertar(id, paciente(id, new Random(id)));
                         if (idxMuestra[0] < CAP_MUESTRA)
-                            muestraAvl[idxMuestra[0]++] = id; // ID real guardado
+                            muestraHash[idxMuestra[0]++] = id; // ID real guardado
                         insertado = true;
                     } catch (IllegalArgumentException ignored) {
                         // ID duplicado, reintenta
@@ -239,22 +241,22 @@ public class Benchmark {
 
             // getTargets, devuelve una copia de los IDs reales insertados.
             // Se llama DESPUES del fill, por lo que contednra exactamente los IDs
-            // que estan en el arbol para ese run
+            // que estan en la tabla para ese run
             java.util.function.Supplier<long[]> targets = () -> {
                 int tam = idxMuestra[0];
-                return Arrays.copyOf(muestraAvl, tam);
+                return Arrays.copyOf(muestraHash, tam);
             };
 
-            // insertar O(log n)
+            // insertar O(1) promedio
             // La lambda usa un ID nuevo garantizando que no colisiona.
-            run("ArbolAVL", "insertar", factory, fill,
+            run("TablaHash", "insertar", factory, fill,
                     v -> {
                         long id = v;
                         boolean ok = false;
                         Random r = new Random(v);
                         while (!ok) {
                             try {
-                                avl[0].insertar(id, paciente(id, r));
+                                hash[0].insertar(id, paciente(id, r));
                                 ok = true;
                             } catch (IllegalArgumentException ignored) {
                                 id = Math.abs(r.nextLong()) + 1;
@@ -263,14 +265,14 @@ public class Benchmark {
                     },
                     null); // insertar no necesita buscar targets existentes
 
-            // buscar O(log n), target existente
-            run("ArbolAVL", "buscar", factory, fill,
-                    v -> avl[0].buscar(v),
+            // buscar O(1) promedio, target existente
+            run("TablaHash", "buscar", factory, fill,
+                    v -> hash[0].buscar(v),
                     targets);
 
-            // eliminar O(log n), target existente con rebalanceo
-            run("ArbolAVL", "eliminar", factory, fill,
-                    v -> avl[0].eliminar(v),
+            // eliminar O(1) promedio, target existente
+            run("TablaHash", "eliminar", factory, fill,
+                    v -> hash[0].eliminar(v),
                     targets);
         }
 
