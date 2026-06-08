@@ -3,160 +3,128 @@ package grupo1.Estructuras;
 import grupo1.Clases.Paciente;
 
 /**
- * Cola de prioridad por buckets para triage medico.
- *
- * Diseno:
- * - 5 listas enlazadas (una por cada nivel de triage 1..5)
- * - cada lista mantiene orden FIFO de llegada
- * - para atender, se busca desde nivel 1 hasta 5
- *
- * Importante:
- * El escaneo 1..5 es constante porque el numero de niveles de triage
- * es fijo y pequeno. Por eso atender tambien es O(1) en este problema.
+ * Cola de prioridad con Heap
  */
 public class ColaTriage {
 
-    // Niveles validos de triage en el sistema.
+    // Niveles triage
     public static final int TRIAGE_MIN = 1;
     public static final int TRIAGE_MAX = 5;
 
-    // Arreglo de listas (bucket 0 => triage 1, ..., bucket 4 => triage 5).
-    private final Lista[] buckets;
-
-    // Cantidad total de pacientes en todas las listas.
-    private int totalPacientes;
-
-    /**
-     * Construye la cola de triage con 5 listas vacias.
-     */
+    // En vez de arreglos de lsitas se usan heap
+    private heap heap;
 
     public ColaTriage() {
-        buckets = new Lista[TRIAGE_MAX];
-        for (int i = 0; i < buckets.length; i++) {
-            buckets[i] = new Lista();
-        }
-        totalPacientes = 0;
+        this.heap = new heap();
     }
 
     /**
-     * Inserta un paciente en el bucket correspondiente a su nivel de triage.
-     *
-     * Complejidad: O(1)
-     *
-     * @param paciente paciente a registrar.
+     * Inserta un paciente usando el Heap.
      */
     public void insertarPaciente(Paciente paciente) {
         if (paciente == null) {
             throw new IllegalArgumentException("El paciente no puede ser null.");
         }
-
-        int nivel = paciente.getNivelTriage();
+        int nivel = paciente.getNivelTriage().intValue();
         validarNivelTriage(nivel);
-
-        // Mapeo 1..5 -> 0..4
-        buckets[nivel - 1].encolar(paciente);
-        totalPacientes++;
+        
+        heap.insertar(paciente);
     }
 
     /**
-     * Atiende y retorna el paciente de mayor prioridad disponible.
-     *
-     * Reglas:
-     * 1) Menor nivel de triage sale primero (1 antes que 5)
-     * 2) Si hay empate de nivel, se respeta FIFO por lista
-     *
-     * Complejidad: O(1) en este contexto (maximo 5 buckets a revisar)
-     *
-     * @return paciente atendido o null si no hay pacientes.
+     * retorna el paciente que tenga mayor prioridad
      */
     public Paciente atenderPaciente() {
-        for (int nivel = TRIAGE_MIN; nivel <= TRIAGE_MAX; nivel++) {
-            Lista lista = buckets[nivel - 1];
-            if (!lista.estaVacia()) {
-                totalPacientes--;
-                Paciente atendido = lista.desencolar();
-                return atendido;
-            }
-        }
-        return null;
+        return heap.extraerMaximo();
     }
 
     /**
-     * Consulta el siguiente paciente a atender sin extraerlo.
-     *
-     * Complejidad: O(1) en este contexto (5 buckets fijos)
-     *
-     * @return siguiente paciente o null si no hay pacientes.
+     * Ve el sisguiente pacietne en cola
      */
     public Paciente verSiguientePaciente() {
-        for (int nivel = TRIAGE_MIN; nivel <= TRIAGE_MAX; nivel++) {
-            Lista lista = buckets[nivel - 1];
-            if (!lista.estaVacia()) {
-                return lista.frente();
-            }
-        }
-
-        return null;
+        return heap.frente();
     }
 
     /**
-     * Retorna hasta cantidad pacientes en el orden real de atencion
-     * sin retirarlos de la estructura.
+     * Retorna hasta cantidad pacientes en el orden de atencion esperados
      */
     public Paciente[] obtenerSiguientesPacientes(int cantidad) {
-        if (cantidad <= 0 || totalPacientes == 0) {
+        int total = heap.tam();
+        if (cantidad <= 0 || total == 0) {
             return new Paciente[0];
         }
 
-        Paciente[] resultado = new Paciente[Math.min(cantidad, totalPacientes)];
-        int indice = 0;
+        int limite = Math.min(cantidad, total);
+        Paciente[] resultado = new Paciente[limite];
+        
+        //se extraen los elementos del heap actual a un arreglo pero temporal
+        Paciente[] copia = heap.obtenerArray();
+        for (int i = 0; i < limite; i++) {
+            resultado[i] = copia[i];
+        }
 
-        for (int nivel = TRIAGE_MIN; nivel <= TRIAGE_MAX && indice < resultado.length; nivel++) {
-            Lista lista = buckets[nivel - 1];
-            int copiados = lista.copiarPrimeros(resultado, indice, resultado.length - indice);
-            indice += copiados;
+            // se ordena el temparray 
+        for (int i = 1; i < limite; i++) {
+            Paciente clave = resultado[i];
+            int j = i - 1;
+
+            while (j >= 0 && debeIrAntes(clave, resultado[j])) {
+                resultado[j + 1] = resultado[j];
+                j--;
+            }
+            resultado[j + 1] = clave;
         }
 
         return resultado;
     }
 
-    /**
-     * Retorna la cantidad total de pacientes.
-     *
-     * @return total en la cola de triage.
-     */
-    public int totalPacientes() {
-        return totalPacientes;
+    // Función auxiliar para el ordenamiento de la GUI
+    private boolean debeIrAntes(Paciente a, Paciente b) {
+        if (a == null) return false;
+        if (b == null) return true;
+        
+        if (a.getNivelTriage() < b.getNivelTriage()) return true;//comparamos nivel triage
+        if (a.getNivelTriage().equals(b.getNivelTriage())) {
+            if (a.getFechaIngreso().isBefore(b.getFechaIngreso())) return true;//if nivel triage es igual --> comaparamos fecha
+            if (a.getFechaIngreso().isEqual(b.getFechaIngreso())) {
+                return a.getHoraIngreso().isBefore(b.getHoraIngreso());// else misma fecha --> comparamos la Hora
+            }
+        }
+        return false;
     }
 
-    /**
-     * Retorna la cantidad de pacientes en un nivel de triage especifico.
-     *
-     * @param nivel nivel de triage (1..5)
-     * @return cantidad de pacientes en ese nivel.
-     */
+    //Retorna la cantidad total de pacientes
+    public int totalPacientes() {
+        return heap.tam();
+    }
+
+    //Retorna la cantidad de pacientes en un nivel de triage especifico
     public int pacientesPorNivel(int nivel) {
         validarNivelTriage(nivel);
-        return buckets[nivel - 1].size();
+        int contador = 0;
+        
+        Paciente[] pacientes = heap.obtenerArray();
+        int total = heap.tam();
+        
+        for (int i = 0; i < total; i++) {
+            if (pacientes[i] != null && pacientes[i].getNivelTriage() == nivel) {
+                contador++;
+            }
+        }
+        return contador;
     }
 
-    /**
-     * Indica si la estructura completa esta vacia.
-     *
-     * @return true si no hay pacientes.
-     */
+    //Indica si la estructura completa esta vacia
     public boolean estaVacia() {
-        return totalPacientes == 0;
+        return heap.vacio();
     }
 
-    /**
-     * Valida que el nivel de triage este en el rango permitido.
-     */
+    //Valida que el nivel de triage este en el rango permitido
+
     private void validarNivelTriage(int nivel) {
         if (nivel < TRIAGE_MIN || nivel > TRIAGE_MAX) {
             throw new IllegalArgumentException(
                     "Nivel de triage invalido: " + nivel + ". Debe estar entre 1 y 5.");
         }
     }
-
 }

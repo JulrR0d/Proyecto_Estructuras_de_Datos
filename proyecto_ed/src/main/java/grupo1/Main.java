@@ -24,11 +24,11 @@ public class Main {
 
                 // Descomentar solo un bloque segun lo que se quiera ejecutar
 
-                // SISTEMA. Interfaz grafica
-                // SwingUtilities.invokeLater(Main::iniciar);
+                //SISTEMA. Interfaz grafica
+                SwingUtilities.invokeLater(Main::iniciar);
 
                 // BENCHMARK. Pruebas de complejidad empirica
-                Benchmark.main(args);
+                //Benchmark.main(args);
         }
 
         private static void iniciar() {
