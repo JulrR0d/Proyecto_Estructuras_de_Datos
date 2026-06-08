@@ -122,6 +122,8 @@ C:.
     │   │           │   ├───Lista.java
     │   │           │   ├───Nodo.java
     │   │           │   └───Pila.java
+    |   |           |   ├───heap.java
+    |   |           |   └───TablaHash.java
     │   │           ├───Features
     │   │           │   ├───RegistroCSV.java
     │   │           │   └───ResumenTXT.java
