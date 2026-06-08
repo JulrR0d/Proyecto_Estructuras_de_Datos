@@ -8,7 +8,6 @@
 </p>
 
 > ## Estructuras de Datos (2016699) - Grupo 1
->
 > Profesor: David Alberto Herrera Alvarez - dherreraal@unal.edu.co
 >
 > Monitor: Daniel Alfonso Cely Infante - dcelyi@unal.edu.co
@@ -16,14 +15,12 @@
 ---
 
 ## Descripción del Proyecto
-
 El **Triage Stage Emergency** es un sistema inteligente de selección y clasificación de pacientes basado en necesidades terapéuticas y recursos disponibles. A diferencia del modelo tradicional por orden de llegada, este sistema implementa algoritmos de priorización clínica para asegurar que las emergencias vitales sean atendidas de inmediato.
 
 ### Objetivos
-
-- Gestionar el flujo masivo de pacientes en una sala de emergencias.
-- Garantizar la asignación de atención mediante niveles de urgencia (1-5).
-- Optimizar la búsqueda y recuperación de información de pacientes en tiempo real.
+* Gestionar el flujo masivo de pacientes en una sala de emergencias.
+* Garantizar la asignación de atención mediante niveles de urgencia (1-5).
+* Optimizar la búsqueda y recuperación de información de pacientes en tiempo real.
 
 ---
 
@@ -31,17 +28,16 @@ El **Triage Stage Emergency** es un sistema inteligente de selección y clasific
 
 Para cumplir con los requisitos de alto rendimiento, se implementaron estructuras de datos manuales optimizadas:
 
-| Funcionalidad                          | Estructura Utilizada              | Complejidad (Big O)                       | Justificación                                                                            |
-| :------------------------------------- | :-------------------------------- | :---------------------------------------- | :--------------------------------------------------------------------------------------- |
-| **Gestión de Prioridad**               | Cola de Prioridad con _Buckets_   | $O(1)$                                    | Arreglo de 5 listas enlazadas (una por nivel de triage) para evitar recorridos lineales. |
-| **Gestión de Prioridad (alternativa)** | Montículo (heap)                  | $O(\log n)$ inserción / $O(1)$ extracción | Desempate por fecha y hora de ingreso, mayor precisión en el ordenamiento.               |
-| **Búsqueda por ID**                    | Tabla Hash                        | $O(1)$                                    | Acceso directo por ID con función hash universal, mejor que AVL en tiempo de búsqueda.   |
-| **Búsqueda por ID (anterior)**         | Árbol Binario Balanceado (AVL)    | $O(\log n)$                               | Búsquedas rápidas con grandes volúmenes de datos.                                        |
-| **Desempate (FIFO)**                   | Lista Enlazada con puntero `tail` | $O(1)$                                    | Inserciones al final sin recorrer la lista, gracias al puntero cola/tail.                |
-| **Historial de Atenciones**            | Pila (LIFO)                       | $O(1)$                                    | Registra pacientes atendidos y permite deshacer la última atención.                      |
+| Funcionalidad | Estructura Utilizada | Complejidad (Big O) | Justificación |
+| :--- | :--- | :--- | :--- |
+| **Gestión de Prioridad** | Cola de Prioridad con *Buckets* | $O(1)$ | Arreglo de 5 listas enlazadas (una por nivel de triage) para evitar recorridos lineales. |
+| **Gestión de Prioridad (alternativa)** | Montículo (heap) | $O(\log n)$ inserción / $O(1)$ extracción | Desempate por fecha y hora de ingreso, mayor precisión en el ordenamiento. |
+| **Búsqueda por ID** | Tabla Hash | $O(1)$ | Acceso directo por ID con función hash universal, mejor que AVL en tiempo de búsqueda. |
+| **Búsqueda por ID (anterior)** | Árbol Binario Balanceado (AVL) | $O(\log n)$ | Búsquedas rápidas con grandes volúmenes de datos. |
+| **Desempate (FIFO)** | Lista Enlazada con puntero `tail` | $O(1)$ | Inserciones al final sin recorrer la lista, gracias al puntero cola/tail. |
+| **Historial de Atenciones** | Pila (LIFO) | $O(1)$ | Registra pacientes atendidos y permite deshacer la última atención. |
 
 ### Funcionamiento de la Cola de Prioridad
-
 El sistema no utiliza una lista única, sino un arreglo de estructuras paralelas:
 
 ```
@@ -53,7 +49,6 @@ El sistema no utiliza una lista única, sino un arreglo de estructuras paralelas
 ```
 
 #### **Nuestro sistema debe:**
-
 - Gestión de Prioridad Multinivel: Clasificación y ordenamiento automático en 5 categorías de urgencia con complejidad $O(1)$.
 - Priorización automática: Mantener una fila de espera donde los pacientes con menor nivel de Triage siempre estén al principio.
 - Inmutabilidad temporal: Una vez registrado el ingreso, la fecha y hora no deben ser modificables por el usuario, asegurando la transparencia en las auditorías de tiempos de espera.
@@ -66,25 +61,23 @@ El sistema no utiliza una lista única, sino un arreglo de estructuras paralelas
 ---
 
 ### Modelo de Información
-
 El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 
-| Campo          | Tipo        | Descripción                               |
-| :------------- | :---------- | :---------------------------------------- |
-| `id`           | `long`      | Identificador único.                      |
-| `nombre`       | `String`    | Nombre completo del paciente.             |
-| `edad`         | `int`       | Edad del paciente (rango 0-100).          |
-| `sexo`         | `char`      | Masculino / Femenino.                     |
-| `EPS`          | `String`    | EPS a la que pertenece.                   |
-| `sintomas`     | `String`    | Evaluación del paciente.                  |
-| `nivelTriage`  | `byte`      | Prioridad médica (niveles 1-5).           |
-| `fechaIngreso` | `LocalDate` | Capturada automáticamente al registro.    |
-| `horaIngreso`  | `LocalTime` | Estampa de tiempo para desempates (FIFO). |
+| Campo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `id` | `long` | Identificador único. |
+| `nombre` | `String` | Nombre completo del paciente. |
+| `edad` | `int` | Edad del paciente (rango 0-100). |
+| `sexo` | `char` | Masculino / Femenino. |
+| `EPS` | `String` | EPS a la que pertenece. |
+| `sintomas` | `String` | Evaluación del paciente. |
+| `nivelTriage` | `byte` | Prioridad médica (niveles 1-5). |
+| `fechaIngreso` | `LocalDate` | Capturada automáticamente al registro. |
+| `horaIngreso` | `LocalTime` | Estampa de tiempo para desempates (FIFO). |
 
 ---
 
 ## Desarrollado por:
-
 - Diego Alejandro Prieto Badillo - diprietob@unal.edu.co
 - Julian Ricardo Rodriguez Villamizar - julrodriguezvi@unal.edu.co
 - Sara Mariana Sanabria Ortiz - sasanabriao@unal.edu.co
@@ -94,19 +87,16 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 ---
 
 ## Instalación
-
 1. Clonar el repositorio: `git clone <url-del-repo>`
 2. Abrir el proyecto con IntelliJ IDEA o VS Code
 3. Ejecutar `Main.java` para iniciar el sistema escogiendo entre acceder a la interfaz de triage o correr las pruebas de complejidad
 
 ## Herramientas:
-
 - Java
 - Python
 - Git
 
 ## Estructura del proyecto:
-
 ```text
 C:.
 └───proyecto_ed
