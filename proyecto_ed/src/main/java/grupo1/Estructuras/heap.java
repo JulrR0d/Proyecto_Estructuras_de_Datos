@@ -126,36 +126,91 @@ public class Heap {
         return Arrays.copyOf(monticulo, tam);
     }
 
-    // Retorna hasta cantidad pacientes en orden de prioridad sin modificar el heap.
     public Paciente[] obtenerSiguientesPacientes(int cantidad) {
-        if (cantidad <= 0 || tam == 0)
+        if (cantidad <= 0 || tam == 0) {
             return new Paciente[0];
+        }
 
         int n = Math.min(cantidad, tam);
-        Paciente[] copia = new Paciente[tam];
-        for (int i = 0; i < tam; i++)
-            copia[i] = monticulo[i];
-
         Paciente[] resultado = new Paciente[n];
-        int tamCopia = tam;
+
+        // Mini heap de índices para evaluar candidatos sin clonar el montículo entero
+        int[] auxHeap = new int[n * 2 + 2];
+        int auxTam = 0;
+
+        // Se registra el primer paciente que es la raiz
+        auxHeap[0] = 0;
+        auxTam++;
 
         for (int k = 0; k < n; k++) {
-            resultado[k] = copia[0];
-            tamCopia--;
-            copia[0] = copia[tamCopia];
-            copia[tamCopia] = null;
+            // El de mayor prioridad siempre estará en la posición 0 del auxHeap
+            int actual = auxHeap[0];
+            resultado[k] = monticulo[actual];
+
+            // Extracción y reordenamiento en el auxHeap
+            auxTam--;
+            auxHeap[0] = auxHeap[auxTam];
+
             int i = 0;
-            while (indiceHijoIzq(i) < tamCopia) {
-                int mayor = indiceHijoIzq(i);
-                int der = indiceHijoDer(i);
-                if (der < tamCopia && prioridadmayor(der, mayor, copia))
-                    mayor = der;
-                if (prioridadmayor(i, mayor, copia))
+            while (2 * i + 1 < auxTam) {
+                int hijoIzq = 2 * i + 1;
+                int hijoDer = 2 * i + 2;
+                int mejorHijo = hijoIzq;
+
+                if (hijoDer < auxTam && prioridadmayor(auxHeap[hijoDer], auxHeap[hijoIzq])) {
+                    mejorHijo = hijoDer;
+                }
+
+                if (prioridadmayor(auxHeap[mejorHijo], auxHeap[i])) {
+                    int temp = auxHeap[i];
+                    auxHeap[i] = auxHeap[mejorHijo];
+                    auxHeap[mejorHijo] = temp;
+                    i = mejorHijo;
+                } else {
                     break;
-                Paciente tmp = copia[i];
-                copia[i] = copia[mayor];
-                copia[mayor] = tmp;
-                i = mayor;
+                }
+            }
+
+            // Obtener hijos del heap principal e insertarlos en auxHeap
+            int izq = indiceHijoIzq(actual);
+            int der = indiceHijoDer(actual);
+
+            // Insertar hijo izquierdo si existe
+            if (izq < tam) {
+                auxHeap[auxTam] = izq;
+                int curr = auxTam;
+                auxTam++;
+
+                while (curr > 0) {
+                    int padre = (curr - 1) / 2;
+                    if (prioridadmayor(auxHeap[curr], auxHeap[padre])) {
+                        int temp = auxHeap[curr];
+                        auxHeap[curr] = auxHeap[padre];
+                        auxHeap[padre] = temp;
+                        curr = padre;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            // Insertar hijo derecho si existe
+            if (der < tam) {
+                auxHeap[auxTam] = der;
+                int curr = auxTam;
+                auxTam++;
+
+                while (curr > 0) {
+                    int padre = (curr - 1) / 2;
+                    if (prioridadmayor(auxHeap[curr], auxHeap[padre])) {
+                        int temp = auxHeap[curr];
+                        auxHeap[curr] = auxHeap[padre];
+                        auxHeap[padre] = temp;
+                        curr = padre;
+                    } else {
+                        break;
+                    }
+                }
             }
         }
 

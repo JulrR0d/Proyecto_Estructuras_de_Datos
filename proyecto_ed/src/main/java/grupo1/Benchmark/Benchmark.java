@@ -163,41 +163,40 @@ public class Benchmark {
         // ColaTriage
         // Buckets de 5 listas FIFO. Todas las operaciones son O(1) porque el
         // numero de niveles de triage es constante (5).
-        /*
-         * {
-         * ColaTriage[] cola = new ColaTriage[1];
-         * Random rng = new Random(SEED);
-         * 
-         * Runnable[] factory = { () -> { // factory, nueva cola vacia y RNG reseteado
-         * cola[0] = new ColaTriage();
-         * rng.setSeed(SEED);
-         * } };
-         * 
-         * // Llenado (fill), inserta un paciente con ID aleatorio. O(1).
-         * Runnable fill = () -> cola[0].insertarPaciente(
-         * paciente(Math.abs(rng.nextLong()) % 1_000_000_000L + 1, rng));
-         * 
-         * // insertarPaciente O(1)
-         * run("ColaTriage", "insertarPaciente", factory, fill,
-         * v -> cola[0].insertarPaciente(paciente(v, new Random(v))),
-         * null); // no necesita targets existentes
-         * 
-         * // atenderPaciente O(1) extrae el de mayor prioridad
-         * run("ColaTriage", "atenderPaciente", factory, fill,
-         * v -> cola[0].atenderPaciente(),
-         * null);
-         * 
-         * // verSiguientePaciente O(1) consulta sin extraer
-         * run("ColaTriage", "verSiguientePaciente", factory, fill,
-         * v -> cola[0].verSiguientePaciente(),
-         * null);
-         * 
-         * // obtenerSiguientesPacientes O(k)
-         * run("ColaTriage", "obtenerSiguientes", factory, fill,
-         * v -> cola[0].obtenerSiguientesPacientes(10),
-         * null);
-         * }
-         */
+
+        {
+            ColaTriage[] cola = new ColaTriage[1];
+            Random rng = new Random(SEED);
+
+            Runnable[] factory = { () -> { // factory, nueva cola vacia y RNG reseteado
+                cola[0] = new ColaTriage();
+                rng.setSeed(SEED);
+            } };
+
+            // Llenado (fill), inserta un paciente con ID aleatorio. O(1).
+            Runnable fill = () -> cola[0].insertarPaciente(
+                    paciente(Math.abs(rng.nextLong()) % 1_000_000_000L + 1, rng));
+
+            // insertarPaciente O(1)
+            run("ColaTriage", "insertarPaciente", factory, fill,
+                    v -> cola[0].insertarPaciente(paciente(v, new Random(v))),
+                    null); // no necesita targets existentes
+
+            // atenderPaciente O(1) extrae el de mayor prioridad
+            run("ColaTriage", "atenderPaciente", factory, fill,
+                    v -> cola[0].atenderPaciente(),
+                    null);
+
+            // verSiguientePaciente O(1) consulta sin extraer
+            run("ColaTriage", "verSiguientePaciente", factory, fill,
+                    v -> cola[0].verSiguientePaciente(),
+                    null);
+
+            // obtenerSiguientesPacientes O(k)
+            run("ColaTriage", "obtenerSiguientes", factory, fill,
+                    v -> cola[0].obtenerSiguientesPacientes(10),
+                    null);
+        }
 
         // TablaHash
         // Tabla hash con encadenamiento y familia universal. Insertar, buscar y

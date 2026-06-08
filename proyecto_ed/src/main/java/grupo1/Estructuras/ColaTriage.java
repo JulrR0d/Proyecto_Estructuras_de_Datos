@@ -45,14 +45,6 @@ public class ColaTriage {
         return heap.frente();
     }
 
-    /**
-     * Retorna hasta cantidad pacientes en el orden de atencion esperados
-     */
-    public Paciente[] obtenerSiguientesPacientes(int cantidad) {
-        Paciente[] resultado = heap.obtenerSiguientesPacientes(cantidad);
-        return resultado;
-    }
-
     // Retorna la cantidad total de pacientes
     public int totalPacientes() {
         return heap.tam();
@@ -86,5 +78,13 @@ public class ColaTriage {
             throw new IllegalArgumentException(
                     "Nivel de triage invalido: " + nivel + ". Debe estar entre 1 y 5.");
         }
+    }
+
+    /**
+     * Retorna hasta cantidad pacientes en el orden de atencion esperados
+     */
+    public Paciente[] obtenerSiguientesPacientes(int cantidad) {
+        Paciente[] resultado = heap.obtenerSiguientesPacientes(cantidad);
+        return resultado;
     }
 }
