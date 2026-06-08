@@ -1,4 +1,5 @@
 package grupo1.Estructuras;
+
 import grupo1.Clases.Paciente;
 
 public class heap {
@@ -7,26 +8,31 @@ public class heap {
     private int tam;
     private static final int CAPACIDAD_INICIAL = 64;
 
-    public heap(){
+    public heap() {
         this.monticulo = new Paciente[CAPACIDAD_INICIAL];
         this.tam = 0;
     }
-    
+
     private int indicePadre(int i) { return (i - 1) / 2; }
     private int indiceHijoIzq(int i) { return 2 * i + 1; }
     private int indiceHijoDer(int i) { return 2 * i + 2; }
-    
-    private boolean prioridadmayor(int a, int b){
-        Paciente PA = monticulo[a];
-        Paciente PB = monticulo[b];
 
-        if (PA.getNivelTriage() < PB.getNivelTriage()) { //comparamos nivel triage
+    // Compara usando el arreglo principal
+    private boolean prioridadmayor(int a, int b) {
+        return prioridadmayor(a, b, monticulo);
+    }
+
+    // Compara usando cualquier arreglo (necesario para obtenerSiguientesPacientes)
+    private boolean prioridadmayor(int a, int b, Paciente[] arr) {
+        Paciente PA = arr[a];
+        Paciente PB = arr[b];
+        if (PA.getNivelTriage() < PB.getNivelTriage()) {
             return true;
-        } else if (PA.getNivelTriage().equals(PB.getNivelTriage())) { 
-            if (PA.getFechaIngreso().isBefore(PB.getFechaIngreso())) { //if nivel triage es igual --> comaparamos fecha
+        } else if (PA.getNivelTriage().equals(PB.getNivelTriage())) {
+            if (PA.getFechaIngreso().isBefore(PB.getFechaIngreso())) {
                 return true;
             } else if (PA.getFechaIngreso().isEqual(PB.getFechaIngreso())) {
-                return PA.getHoraIngreso().isBefore(PB.getHoraIngreso()); // else misma fecha --> comparamos la Hora
+                return PA.getHoraIngreso().isBefore(PB.getHoraIngreso());
             }
         }
         return false;
@@ -35,7 +41,6 @@ public class heap {
     public void insertar(Paciente p) {
         if (p == null) return;
         if (tam == monticulo.length) redimensionar();
-        
         monticulo[tam] = p;
         tam++;
         flotar(tam - 1);
@@ -44,39 +49,32 @@ public class heap {
     private void flotar(int indice) {
         int actual = indice;
         int padre = indicePadre(actual);
-
         while (actual > 0 && prioridadmayor(actual, padre)) {
             intercambiar(actual, padre);
             actual = padre;
             padre = indicePadre(actual);
         }
     }
+
     public Paciente extraerMaximo() {
         if (vacio()) return null;
-
         Paciente pacienteAtendido = monticulo[0];
         monticulo[0] = monticulo[tam - 1];
-        monticulo[tam - 1] = null; 
+        monticulo[tam - 1] = null;
         tam--;
-
         if (tam > 0) hundir(0);
-
         return pacienteAtendido;
     }
 
     private void hundir(int indice) {
         int actual = indice;
-        
         while (indiceHijoIzq(actual) < tam) {
             int hijoMayor = indiceHijoIzq(actual);
             int hijoDer = indiceHijoDer(actual);
-
             if (hijoDer < tam && prioridadmayor(hijoDer, hijoMayor)) {
                 hijoMayor = hijoDer;
             }
-
-            if (prioridadmayor(actual, hijoMayor)) break; 
-
+            if (prioridadmayor(actual, hijoMayor)) break;
             intercambiar(actual, hijoMayor);
             actual = hijoMayor;
         }
@@ -95,9 +93,7 @@ public class heap {
     }
 
     public Paciente frente() {
-        if (vacio()) {
-            return null;
-        }
+        if (vacio()) return null;
         return monticulo[0];
     }
 
@@ -106,8 +102,38 @@ public class heap {
     public int tam() { return tam; }
 
     public Paciente[] obtenerArregloInterno() {
-    return this.monticulo;
-}
+        return this.monticulo;
+    }
+
+    // Retorna hasta cantidad pacientes en orden de prioridad sin modificar el heap.
+    public Paciente[] obtenerSiguientesPacientes(int cantidad) {
+        if (cantidad <= 0 || tam == 0) return new Paciente[0];
+
+        int n = Math.min(cantidad, tam);
+        Paciente[] copia = new Paciente[tam];
+        for (int i = 0; i < tam; i++) copia[i] = monticulo[i];
+
+        Paciente[] resultado = new Paciente[n];
+        int tamCopia = tam;
+
+        for (int k = 0; k < n; k++) {
+            resultado[k] = copia[0];
+            tamCopia--;
+            copia[0] = copia[tamCopia];
+            copia[tamCopia] = null;
+            int i = 0;
+            while (indiceHijoIzq(i) < tamCopia) {
+                int mayor = indiceHijoIzq(i);
+                int der = indiceHijoDer(i);
+                if (der < tamCopia && prioridadmayor(der, mayor, copia)) mayor = der;
+                if (prioridadmayor(i, mayor, copia)) break;
+                Paciente tmp = copia[i]; copia[i] = copia[mayor]; copia[mayor] = tmp;
+                i = mayor;
+            }
+        }
+
+        return resultado;
+    }
 }
 
 
