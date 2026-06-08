@@ -27,7 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import grupo1.Clases.Paciente;
-import grupo1.Estructuras.ArbolAVL;
+import grupo1.Estructuras.TablaHash;
 import grupo1.Estructuras.ColaTriage;
 import grupo1.Estructuras.Pila;
 import grupo1.Features.RegistroCSV;
@@ -54,7 +54,7 @@ public class GUI {
 	private final JComboBox<String> sexoCombo;
 	private final JTextField buscarField;
 
-	private final ArbolAVL arbolAVL = new ArbolAVL(); // Genera el arbol
+	private final TablaHash tablaHash = new TablaHash(); // Genera la tabla hash
 
 	private AVLpanel avlPanel; // panel con el arbol AVL
 
@@ -278,7 +278,8 @@ public class GUI {
 		salida.setBackground(INSET);
 		salida.setForeground(TEXT);
 		// mantener padding interior en la consola, con bordes redondeados
-		salida.setBorder(BorderFactory.createCompoundBorder(crearRelieveInterno(), BorderFactory.createEmptyBorder(12, 12, 12, 12)));
+		salida.setBorder(BorderFactory.createCompoundBorder(crearRelieveInterno(),
+				BorderFactory.createEmptyBorder(12, 12, 12, 12)));
 		aplicarEstiloRedondeado(salida, false);
 
 		JScrollPane scroll = new JScrollPane(salida);
@@ -288,11 +289,12 @@ public class GUI {
 		aplicarEstiloRedondeado(scroll, false);
 		// permitir que el scroll adapte su tamaño dinámicamente
 		scroll.setMinimumSize(new Dimension(200, 120));
-		
+
 		JPanel content = new JPanel(new BorderLayout(10, 10));
 		content.setOpaque(false);
 		content.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
-		// Agrupar el formulario y colocar los botones justo debajo, encima de la consola
+		// Agrupar el formulario y colocar los botones justo debajo, encima de la
+		// consola
 		JPanel topBlock = new JPanel(new BorderLayout());
 		topBlock.setOpaque(false);
 		// formulario en la parte superior del bloque
@@ -304,7 +306,7 @@ public class GUI {
 		// restante y no se sobreponga al formulario cuando se redimensiona
 		content.add(scroll, BorderLayout.CENTER);
 
-		avlPanel = new AVLpanel(arbolAVL);
+		// avlPanel = new AVLpanel(tablaHash);
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, avlPanel, content);
 		split.setDividerLocation(420);
 		split.setResizeWeight(0.35);
@@ -317,16 +319,16 @@ public class GUI {
 		registrar.addActionListener(e -> registrarPaciente());
 		siguiente.addActionListener(e -> mostrarSiguiente());
 		atender.addActionListener(e -> atenderPaciente());
-		estado.addActionListener(e -> actualizarEstado());
+		// estado.addActionListener(e -> actualizarEstado());
 		buscarBtn.addActionListener(e -> buscarPaciente());
 		reporte.addActionListener(e -> generarReporte());
 
 		Paciente[] existentes = colaTriage.obtenerSiguientesPacientes(colaTriage.totalPacientes());
 		for (Paciente p : existentes) {
-			arbolAVL.insertar(p.getId(), p);
+			tablaHash.insertar(p.getId(), p);
 		}
 
-		actualizarEstado();
+		// actualizarEstado();
 	}
 
 	public void mostrar() {
@@ -423,7 +425,7 @@ public class GUI {
 		}
 		try {
 			Long idBuscar = Long.parseLong(textoID.trim());
-			Paciente busq_id = arbolAVL.buscar(idBuscar);
+			Paciente busq_id = tablaHash.buscar(idBuscar);
 			if (busq_id == null) {
 				JOptionPane.showMessageDialog(frame, "El paciente no existe", "No encontrado",
 						JOptionPane.WARNING_MESSAGE);
@@ -457,7 +459,7 @@ public class GUI {
 			long id = Long.parseLong(idField.getText().trim());
 			String nombre = nombreField.getText().trim();
 
-			if (arbolAVL.buscar(id) != null) {
+			if (tablaHash.buscar(id) != null) {
 				throw new IllegalArgumentException("Ya existe un paciente con el ID " + id);
 			}
 
@@ -485,9 +487,9 @@ public class GUI {
 
 			Paciente paciente = new Paciente(id, nombre, edad, sexo, EPS, sintoma, triage);
 			colaTriage.insertarPaciente(paciente);
-			arbolAVL.insertar(paciente.getId(), paciente);
-			long[] camino = arbolAVL.obtenerCaminoBusqueda(id);
-			avlPanel.animarInsercion(camino, id);
+			tablaHash.insertar(paciente.getId(), paciente);
+			// long[] camino = tablaHash.obtenerCaminoBusqueda(id);
+			// avlPanel.animarInsercion(camino, id);
 
 			salida.setText("Paciente registrado\n\n" + paciente + "\n\n" + estadoTexto());
 
@@ -524,22 +526,26 @@ public class GUI {
 			salida.setText("No hay pacientes para atender.\n\n" + estadoTexto());
 			return;
 		}
-		long[] camino = arbolAVL.obtenerCaminoBusqueda(sig.getId());
+		// long[] camino = tablaHash.obtenerCaminoBusqueda(sig.getId());
 		// Animar primero; la eliminación real ocurre al terminar
-		avlPanel.animarEliminacion(camino, sig.getId(), () -> {
-			Paciente atendido = colaTriage.atenderPaciente();
-			registro.registrarAtencion(atendido); // anota el paciente en le csv
-			historialAtenciones.push(atendido); // registro LIFO
-			arbolAVL.eliminar(atendido.getId());
-			salida.setText("Paciente atendido\n\n" + atendido + "\n\n" + estadoTexto());
-			avlPanel.refrescar();
-		});
+		/*
+		 * avlPanel.animarEliminacion(camino, sig.getId(), () -> {
+		 * Paciente atendido = colaTriage.atenderPaciente();
+		 * registro.registrarAtencion(atendido); // anota el paciente en le csv
+		 * historialAtenciones.push(atendido); // registro LIFO
+		 * tablaHash.eliminar(atendido.getId());
+		 * salida.setText("Paciente atendido\n\n" + atendido + "\n\n" + estadoTexto());
+		 * avlPanel.refrescar();
+		 * });
+		 */
 	}
 
-	private void actualizarEstado() {
-		salida.setText(estadoTexto());
-		avlPanel.refrescar();
-	}
+	/*
+	 * private void actualizarEstado() {
+	 * salida.setText(estadoTexto());
+	 * avlPanel.refrescar();
+	 * }
+	 */
 
 	private String estadoTexto() {
 		StringBuilder sb = new StringBuilder();
