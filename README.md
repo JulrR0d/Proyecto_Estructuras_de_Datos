@@ -97,7 +97,7 @@ El sistema gestiona la entidad `Paciente` con los siguientes atributos:
 
 ## Instalación
 1. Clonar el repositorio: `git clone <url-del-repo>`
-- Si se desea acceder al Sistema de Triage. Se ejecuta el archivo 'proyecto_ed.exe' encontrado en la carpeta 'output'
+- Si se desea acceder al Sistema de Triage. Se ejecuta el archivo 'proyecto_ed.exe' encontrado en la carpeta raiz.
 - Si se desea realizar las pruebas de complejidad temporal. Se abre el archivo 'Main.java' y se descomenta la linea como se indica.
 
 ## Herramientas:
