@@ -56,7 +56,7 @@ public class GUI {
 
 	private final TablaHash tablaHash = new TablaHash(); // Genera la tabla hash
 
-	private AVLpanel avlPanel; // panel con el arbol AVL
+	private HashPanel hashPanel; // panel con la tabla Hash
 
 	private final RegistroCSV registro = new RegistroCSV();
 	/**
@@ -306,8 +306,8 @@ public class GUI {
 		// restante y no se sobreponga al formulario cuando se redimensiona
 		content.add(scroll, BorderLayout.CENTER);
 
-		// avlPanel = new AVLpanel(tablaHash);
-		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, avlPanel, content);
+		hashPanel = new HashPanel(tablaHash);
+		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, hashPanel, content);
 		split.setDividerLocation(420);
 		split.setResizeWeight(0.35);
 		split.setDividerSize(4);
@@ -328,7 +328,7 @@ public class GUI {
 			tablaHash.insertar(p.getId(), p);
 		}
 
-		// actualizarEstado();
+		actualizarEstado();
 	}
 
 	public void mostrar() {
@@ -433,6 +433,7 @@ public class GUI {
 			} else {
 				salida.setText(
 						"Paciente encontrado con ID dado\n\n" + busq_id + "\n\n" + estadoTexto());
+				hashPanel.animarBusqueda(tablaHash.indiceBucket(idBuscar), idBuscar);
 			}
 			buscarField.setText("");
 		} catch (NumberFormatException e) {
@@ -444,7 +445,6 @@ public class GUI {
 	}
 
 	// metodo para generar reporte en txt
-
 	private void generarReporte() {
 		new ResumenTXT().generarResumenDia();
 		JOptionPane.showMessageDialog(
@@ -487,9 +487,9 @@ public class GUI {
 
 			Paciente paciente = new Paciente(id, nombre, edad, sexo, EPS, sintoma, triage);
 			colaTriage.insertarPaciente(paciente);
+			int bucket = tablaHash.indiceBucket(paciente.getId()); // Calcula el bucket antes de insertar
 			tablaHash.insertar(paciente.getId(), paciente);
-			// long[] camino = tablaHash.obtenerCaminoBusqueda(id);
-			// avlPanel.animarInsercion(camino, id);
+			hashPanel.animarInsercion(bucket, paciente.getId());
 
 			salida.setText("Paciente registrado\n\n" + paciente + "\n\n" + estadoTexto());
 
@@ -526,26 +526,22 @@ public class GUI {
 			salida.setText("No hay pacientes para atender.\n\n" + estadoTexto());
 			return;
 		}
-		// long[] camino = tablaHash.obtenerCaminoBusqueda(sig.getId());
-		// Animar primero; la eliminación real ocurre al terminar
-		/*
-		 * avlPanel.animarEliminacion(camino, sig.getId(), () -> {
-		 * Paciente atendido = colaTriage.atenderPaciente();
-		 * registro.registrarAtencion(atendido); // anota el paciente en le csv
-		 * historialAtenciones.push(atendido); // registro LIFO
-		 * tablaHash.eliminar(atendido.getId());
-		 * salida.setText("Paciente atendido\n\n" + atendido + "\n\n" + estadoTexto());
-		 * avlPanel.refrescar();
-		 * });
-		 */
+		int bucket = tablaHash.indiceBucket(sig.getId());
+		hashPanel.animarEliminacion(bucket, sig.getId(), () -> {
+            Paciente atendido = colaTriage.atenderPaciente();
+            registro.registrarAtencion(atendido);
+            historialAtenciones.push(atendido);
+            tablaHash.eliminar(atendido.getId());
+            salida.setText("Paciente atendido\n\n" + atendido + "\n\n" + estadoTexto());
+            hashPanel.refrescar();
+        });
 	}
 
-	/*
-	 * private void actualizarEstado() {
-	 * salida.setText(estadoTexto());
-	 * avlPanel.refrescar();
-	 * }
-	 */
+	private void actualizarEstado() {
+		salida.setText(estadoTexto());
+		hashPanel.refrescar();
+	}
+	
 
 	private String estadoTexto() {
 		StringBuilder sb = new StringBuilder();

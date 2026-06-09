@@ -221,84 +221,62 @@ public class TablaHash {
     }
 
     // METODOS PARA GUI
-    // Se dejan el mismo codigo del ArbolAVL que se modificara luego
-    /*
-     * // Retorna arreglo con los IDs visitados al buscar, en orden de visita
-     * public long[] obtenerCaminoBusqueda(long id) {
-     * long[] camino = new long[altura() + 1];
-     * int i = 0;
-     * Nodo n = raiz;
-     * while (n != null) {
-     * camino[i++] = n.id;
-     * if (id == n.id)
-     * break;
-     * n = id < n.id ? n.izq : n.der;
-     * }
-     * // Recortar al tamaño real
-     * long[] recortado = new long[i];
-     * for (int j = 0; j < i; j++)
-     * recortado[j] = camino[j];
-     * return recortado;
-     * }
-     * 
-     * Llena el arreglo destino con los nodos en inorden, retorna cuántos llenó
-     * Se usa para que AVLPanel sepa qué nodos existen y en qué orden
-     * 
-     * 
-     * public int volcarInorden(Paciente[] destino, int maxSize) {
-     * int[] idx = { 0 };
-     * volcarInorden(raiz, destino, idx, maxSize);
-     * return idx[0];
-     * }
-     * 
-     * private void volcarInorden(Nodo n, Paciente[] destino, int[] idx, int max) {
-     * if (n == null || idx[0] >= max)
-     * return;
-     * volcarInorden(n.izq, destino, idx, max);
-     * destino[idx[0]++] = n.valor;
-     * volcarInorden(n.der, destino, idx, max);
-     * }
-     * 
-     * // Snapshot plano de un nodo para que AVLPanel dibuje sin acceder a Nodo
-     * interno
-     * public static class NodoVista {
-     * public final long id;
-     * public final String nombre;
-     * public final int nivel; // profundidad, raiz = 0
-     * public final int pos; // posicion inorden (0,1,2...)
-     * public final long idPadre; // -1 si es raiz
-     * public final int balance;
-     * 
-     * public NodoVista(long id, String nombre, int nivel, int pos, long idPadre,
-     * int balance) {
-     * this.id = id;
-     * this.nombre = nombre;
-     * this.nivel = nivel;
-     * this.pos = pos;
-     * this.idPadre = idPadre;
-     * this.balance = balance;
-     * }
-     * }
-     * 
-     * // Llena arreglo de NodoVista en inorden, retorna cuántos nodos hay
-     * public int obtenerVistas(NodoVista[] destino) {
-     * int[] contador = { 0 };
-     * llenarVistas(raiz, 0, -1L, destino, contador);
-     * return contador[0];
-     * }
-     * 
-     * private void llenarVistas(Nodo n, int nivel, long idPadre, NodoVista[] dest,
-     * int[] contador) {
-     * if (n == null || contador[0] >= dest.length)
-     * return;
-     * llenarVistas(n.izq, nivel + 1, n.id, dest, contador);
-     * dest[contador[0]] = new NodoVista(
-     * n.id, n.valor.getNombre(), nivel,
-     * contador[0], // pos inorden = índice actual
-     * idPadre, balance(n));
-     * contador[0]++;
-     * llenarVistas(n.der, nivel + 1, n.id, dest, contador);
-     * }
-     * }
+    
+    // Clase de Buckets estatica
+    /**
+     * Imágen de un bucket para que HashPanel dibuje
+     * sin acceder a las clases internas de TablaHash.
+     *
+     * ids[i]     → ID de la i-ésima entrada en la cadena
+     * nombres[i] → nombre del paciente en esa entrada
+     * La longitud de ambos arreglos es la misma e igual a la
+     * cantidad de entradas en ese bucket.
      */
+    public static class BucketVista {
+        public final long[]   ids;
+        public final String[] nombres;
+        public BucketVista(long[] ids, String[] nombres) {
+            this.ids     = ids;
+            this.nombres = nombres;
+        }
+    }
+
+    //VIsta
+
+    /**
+     * Devuelve una imágen del estado completo de la tabla.
+     * Retorna un arreglo de BucketVista de longitud == capacidad actual.
+     * Complejidad O(n + m).
+     */
+    public BucketVista[] obtenerVistas() {
+        BucketVista[] result = new BucketVista[capacidad];
+        for (int i = 0; i < capacidad; i++) {
+            // Contar entradas en este bucket
+            int count = 0;
+            Entrada e = buckets[i];
+            while (e != null) { count++; e = e.siguiente; }
+            long[]   ids     = new long[count];
+            String[] nombres = new String[count];
+            int k = 0;
+            e = buckets[i];
+            while (e != null) {
+                ids[k]     = e.id;
+                nombres[k] = e.valor.getNombre();
+                k++;
+                e = e.siguiente;
+            }
+            result[i] = new BucketVista(ids, nombres);
+        }
+        return result;
+    }
+    /**
+     * Calcula el índice de bucket que le correspondería al ID dado
+     * con la capacidad actual de la tabla.
+     * Útil para que GUI.java le diga a HashPanel qué bucket animar
+     * ANTES de insertar / eliminar / buscar.
+     * Complejidad O(1).
+     */
+    public int indiceBucket(long id) {
+        return hash(id);
+    }
 }
