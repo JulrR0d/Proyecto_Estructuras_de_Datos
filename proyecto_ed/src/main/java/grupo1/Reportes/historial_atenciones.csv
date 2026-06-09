@@ -1,9 +1,0 @@
-FechaAtencion,HoraAtencion,ID,Nombre,Edad,Sexo,EPS,NivelTriage,Sintomas
-2026-06-08,20:42:37,102,Luis,11,m,Sanitas,1,Choque anafilactico
-2026-06-08,20:42:54,107,Sofia,30,f,Salud Total,1,Infarto
-2026-06-08,20:42:57,101,Ana,15,f,Famisanar,2,Fisura
-2026-06-08,20:43:00,105,Elena,13,f,Nueva EPS,2,Desmayo
-2026-06-08,20:43:04,110,Jorge,40,m,Coosalud,2,Insensibilidad en un miembro
-2026-06-08,21:07:49,102,Luis,11,m,Sanitas,1,Choque anafilactico
-2026-06-08,21:07:53,107,Sofia,30,f,Salud Total,1,Infarto
-2026-06-08,21:07:56,101,Ana,15,f,Famisanar,2,Fisura

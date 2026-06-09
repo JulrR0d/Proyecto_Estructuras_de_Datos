@@ -21,7 +21,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.ejemplo.Main</mainClass>
+                            <mainClass>com.grupo1.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

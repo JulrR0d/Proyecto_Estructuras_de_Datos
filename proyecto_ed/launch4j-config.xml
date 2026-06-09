@@ -2,7 +2,7 @@
     <dontWrapJar>false</dontWrapJar>
     <headerType>console</headerType>
     <jar>target/proyecto_ed-1.0-SNAPSHOT-jar-with-dependencies.jar</jar>
-    <outfile>output/proyecto_ed.exe</outfile>
+    <outfile>../proyecto_ed.exe</outfile>
     <classPath>
         <mainClass>grupo1.Main</mainClass>
     </classPath>
